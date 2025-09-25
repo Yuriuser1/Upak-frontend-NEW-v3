@@ -4,7 +4,7 @@
   command = "./build-static.sh"
 
 [build.environment]
-  NODE_VERSION = "20
+  NODE_VERSION = "20"
   NPM_FLAGS = "--prefix=/opt/buildhome/node_modules"
 
 [[plugins]]
