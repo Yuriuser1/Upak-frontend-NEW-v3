@@ -31,11 +31,20 @@ export default function DashboardPage() {
   async function buy(pkg:'start'|'pro') {
     setErr(null);
     try {
+      // Формируем callback URLs для ЮKassa
+      const baseUrl = window.location.origin;
+      const successUrl = `${baseUrl}/payment/success`;
+      const cancelUrl = `${baseUrl}/payment/cancel`;
+
       const res = await fetch(`${API_BASE}/v2/payments/create`, {
         method:'POST',
         credentials: 'include', // Добавлено: отправка httpOnly cookies
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ package: pkg })
+        body: JSON.stringify({ 
+          package: pkg,
+          return_url: successUrl,
+          cancel_url: cancelUrl
+        })
       });
       if (!res.ok) throw new Error(await res.text());
       const j = await res.json();

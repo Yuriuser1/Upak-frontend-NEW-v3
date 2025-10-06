@@ -4,13 +4,20 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { checkAuth, logout } from '@/lib/auth';
+import { fetchAuthJSON } from '@/lib/api';
 import Link from 'next/link';
+
+type MeData = {
+  email: string;
+  role?: 'user' | 'admin';
+};
 
 export default function DashboardLayout({ children }:{ children: React.ReactNode }) {
   const r = useRouter();
   const path = usePathname();
   const [ok, setOk] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [userRole, setUserRole] = useState<'user' | 'admin'>('user');
 
   useEffect(() => {
     async function verify() {
@@ -19,6 +26,13 @@ export default function DashboardLayout({ children }:{ children: React.ReactNode
         r.replace('/login');
       } else {
         setOk(true);
+        // Загружаем информацию о пользователе для проверки роли
+        try {
+          const meData = await fetchAuthJSON<MeData>('/v2/me');
+          setUserRole(meData.role || 'user');
+        } catch (e) {
+          console.error('Failed to load user role:', e);
+        }
       }
       setChecking(false);
     }
@@ -49,6 +63,11 @@ export default function DashboardLayout({ children }:{ children: React.ReactNode
           <Link className="block hover:underline" href="/dashboard/cards">Карточки</Link>
           <Link className="block hover:underline" href="/dashboard/billing">Платежи</Link>
           <Link className="block hover:underline" href="/dashboard/settings">Настройки</Link>
+          {userRole === 'admin' && (
+            <Link className="block hover:underline text-purple-600 font-medium" href="/dashboard/admin/users">
+              👑 Управление пользователями
+            </Link>
+          )}
         </nav>
         <button
           onClick={handleLogout}
