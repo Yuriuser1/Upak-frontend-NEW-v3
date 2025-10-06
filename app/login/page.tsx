@@ -17,12 +17,11 @@ export default function LoginPage() {
     setErr(null); 
     setLoading(true);
     try {
-      const body = new URLSearchParams({ username: email, password });
-      const res = await fetch(`${API_BASE}/v2/auth/token`, {
+      const res = await fetch(`${API_BASE}/v2/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Важно: получаем httpOnly cookie от сервера
-        body
+        body: JSON.stringify({ email, password })
       });
       
       if (!res.ok) throw new Error('Неверный e-mail или пароль');
@@ -49,6 +48,15 @@ export default function LoginPage() {
         <button disabled={loading} className="w-full bg-black text-white p-2 rounded">
           {loading ? 'Входим…' : 'Войти'}
         </button>
+        <div className="text-center mt-4">
+          <button
+            type="button"
+            onClick={() => r.push('/forgot-password')}
+            className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+          >
+            Забыли пароль?
+          </button>
+        </div>
       </form>
     </main>
   );

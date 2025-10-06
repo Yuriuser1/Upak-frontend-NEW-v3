@@ -48,6 +48,7 @@ export default function DashboardLayout({ children }:{ children: React.ReactNode
           <Link className="block hover:underline" href="/dashboard">Дашборд</Link>
           <Link className="block hover:underline" href="/dashboard/cards">Карточки</Link>
           <Link className="block hover:underline" href="/dashboard/billing">Платежи</Link>
+          <Link className="block hover:underline" href="/dashboard/settings">Настройки</Link>
         </nav>
         <button
           onClick={handleLogout}
