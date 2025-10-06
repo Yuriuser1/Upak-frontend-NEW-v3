@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { setToken } from '@/lib/auth';
 import { API_BASE } from '@/lib/api';
 
 export default function LoginPage() {
@@ -15,17 +14,21 @@ export default function LoginPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setErr(null); setLoading(true);
+    setErr(null); 
+    setLoading(true);
     try {
       const body = new URLSearchParams({ username: email, password });
-      const res = await fetch(`${API_BASE}/auth/token`, {
+      const res = await fetch(`${API_BASE}/v2/auth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'include', // Важно: получаем httpOnly cookie от сервера
         body
       });
+      
       if (!res.ok) throw new Error('Неверный e-mail или пароль');
-      const { access_token } = await res.json();
-      setToken(access_token);
+      
+      // Токен теперь в httpOnly cookie, не нужно сохранять в localStorage
+      // Просто перенаправляем на dashboard
       r.push('/dashboard');
     } catch (e: any) {
       setErr(e.message || 'Ошибка входа');

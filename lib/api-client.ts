@@ -10,6 +10,7 @@ class ApiClient {
   ): Promise<BackendApiResponse<T>> {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        credentials: 'include', // Добавлено: отправка httpOnly cookies
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,
