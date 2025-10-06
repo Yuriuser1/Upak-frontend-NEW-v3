@@ -1,20 +1,31 @@
 
 // lib/auth.ts
-export const TOKEN_KEY = 'upak_token';
 
-export function getToken(): string | null {
-  try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+/**
+ * Проверяет авторизацию пользователя через запрос к /v2/me
+ * Токен теперь хранится в httpOnly cookie, поэтому не доступен из JavaScript
+ */
+export async function checkAuth(): Promise<boolean> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API || 'http://localhost:8000'}/v2/me`, {
+      credentials: 'include', // Важно: отправляет cookies
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
-export function setToken(token: string) {
-  try { localStorage.setItem(TOKEN_KEY, token); } catch {}
-}
-
-export function clearToken() {
-  try { localStorage.removeItem(TOKEN_KEY); } catch {}
-}
-
-export function authHeader() {
-  const t = getToken();
-  return t ? { Authorization: `Bearer ${t}` } : {};
+/**
+ * Выход из системы - удаляет httpOnly cookie на сервере
+ */
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_API || 'http://localhost:8000'}/v2/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch (e) {
+    console.error('Logout error:', e);
+  }
 }

@@ -3,19 +3,40 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { getToken, clearToken } from '@/lib/auth';
+import { checkAuth, logout } from '@/lib/auth';
 import Link from 'next/link';
 
 export default function DashboardLayout({ children }:{ children: React.ReactNode }) {
   const r = useRouter();
   const path = usePathname();
   const [ok, setOk] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const t = getToken();
-    if (!t) r.replace('/login');
-    else setOk(true);
+    async function verify() {
+      const isAuth = await checkAuth();
+      if (!isAuth) {
+        r.replace('/login');
+      } else {
+        setOk(true);
+      }
+      setChecking(false);
+    }
+    verify();
   }, [r, path]);
+
+  async function handleLogout() {
+    await logout();
+    r.push('/login');
+  }
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Проверка авторизации...</p>
+      </div>
+    );
+  }
 
   if (!ok) return null;
 
@@ -29,7 +50,7 @@ export default function DashboardLayout({ children }:{ children: React.ReactNode
           <Link className="block hover:underline" href="/dashboard/billing">Платежи</Link>
         </nav>
         <button
-          onClick={() => { clearToken(); r.push('/login'); }}
+          onClick={handleLogout}
           className="mt-4 text-sm text-gray-600 underline"
         >
           Выйти

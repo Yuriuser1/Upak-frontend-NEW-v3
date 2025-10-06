@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 import { fetchAuthJSON, API_BASE } from '@/lib/api';
-import { authHeader } from '@/lib/auth';
 
 type Me = {
   email: string;
@@ -19,7 +18,7 @@ export default function DashboardPage() {
 
   async function load() {
     try {
-      const data = await fetchAuthJSON<Me>('/me');
+      const data = await fetchAuthJSON<Me>('/v2/me');
       setMe(data);
     } catch (e: any) {
       setErr(e.message || 'Ошибка загрузки');
@@ -32,9 +31,10 @@ export default function DashboardPage() {
   async function buy(pkg:'start'|'pro') {
     setErr(null);
     try {
-      const res = await fetch(`${API_BASE}/payments/create`, {
+      const res = await fetch(`${API_BASE}/v2/payments/create`, {
         method:'POST',
-        headers:{ 'Content-Type':'application/json', ...authHeader() },
+        credentials: 'include', // Добавлено: отправка httpOnly cookies
+        headers:{ 'Content-Type':'application/json' },
         body: JSON.stringify({ package: pkg })
       });
       if (!res.ok) throw new Error(await res.text());
