@@ -36,15 +36,10 @@ export default function DashboardPage() {
       const successUrl = `${baseUrl}/payment/success`;
       const cancelUrl = `${baseUrl}/payment/cancel`;
 
-      const res = await fetch(`${API_BASE}/v2/payments/create`, {
+      const res = await fetch(`${API_BASE}/payments/create-payment?subscription_type=${pkg}`, {
         method:'POST',
         credentials: 'include', // Добавлено: отправка httpOnly cookies
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ 
-          package: pkg,
-          return_url: successUrl,
-          cancel_url: cancelUrl
-        })
+        headers:{ 'Content-Type':'application/json' }
       });
       if (!res.ok) throw new Error(await res.text());
       const j = await res.json();
