@@ -236,6 +236,7 @@ function OrderForm() {
       if (formData.image_file) form.append('image_file', formData.image_file);
 
       const response = await fetch('https://api.upak.space/v2/payments/create', {
+        credentials: 'include',
         method: 'POST',
         body: form
       });
