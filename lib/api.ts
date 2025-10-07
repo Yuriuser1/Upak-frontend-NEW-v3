@@ -4,6 +4,7 @@
 // sends cookies via credentials: 'include', and supports both JSON and URL-encoded form bodies.
 
 export const API = (process.env.NEXT_PUBLIC_API || '').replace(/\/+$/, '');
+export const API_BASE = API; // Backward compatibility alias
 
 export type ApiOptions = RequestInit & {
   json?: any;

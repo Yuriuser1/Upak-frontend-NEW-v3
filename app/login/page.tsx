@@ -17,11 +17,16 @@ export default function LoginPage() {
     setErr(null); 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/v2/auth/login`, {
+      // Use form-urlencoded format with username/password as per OAuth2 spec
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+      
+      const res = await fetch(`${API_BASE}/auth/token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'include', // Важно: получаем httpOnly cookie от сервера
-        body: JSON.stringify({ email, password })
+        body: formData
       });
       
       if (!res.ok) throw new Error('Неверный e-mail или пароль');
