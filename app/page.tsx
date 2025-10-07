@@ -394,6 +394,11 @@ export default function HomePage() {
             <div className="flex items-center space-x-2 sm:space-x-4">
               <div className="hidden sm:flex items-center space-x-4">
                 <OrderForm />
+                <Button asChild variant="default">
+                  <Link href="/login">
+                    Войти
+                  </Link>
+                </Button>
                 <Button variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Telegram
@@ -401,6 +406,11 @@ export default function HomePage() {
               </div>
               <div className="flex sm:hidden items-center space-x-2">
                 <OrderForm />
+                <Button asChild size="sm" variant="default">
+                  <Link href="/login">
+                    Войти
+                  </Link>
+                </Button>
                 <Button variant="outline" size="sm" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white px-2">
                   <ExternalLink className="w-3 h-3" />
                 </Button>
