@@ -11,6 +11,7 @@ type UserData = {
   role: 'user' | 'admin';
   is_active: boolean;
   subscription_type: string;
+  subscription_expires?: string;
   cards_limit: number;
   cards_used: number;
   created_at: string;

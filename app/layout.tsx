@@ -6,7 +6,10 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
+const SITE_URL = 'https://www.upak.space';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'UPAK - Продающие карточки для маркетплейсов с помощью AI',
   description: 'Создавайте профессиональные карточки товаров для Wildberries, Ozon и других маркетплейсов за минуты. AI-генерация контента, обработка изображений, готовые файлы для загрузки.',
   keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, AI генерация, продажи',
@@ -17,16 +20,19 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     title: 'UPAK - Продающие карточки для маркетплейсов',
     description: 'Один клик и твоя карточка готова!',
     type: 'website',
     locale: 'ru_RU',
-    url: 'https://upak.space',
+    url: SITE_URL,
     siteName: 'UPAK',
     images: [
       {
-        url: '/android-chrome-512x512.png',
+        url: `${SITE_URL}/android-chrome-512x512.png`,
         width: 512,
         height: 512,
         alt: 'UPAK Logo',
@@ -37,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'UPAK - Продающие карточки для маркетплейсов',
     description: 'Один клик и твоя карточка готова!',
-    images: ['/android-chrome-512x512.png'],
+    images: [`${SITE_URL}/android-chrome-512x512.png`],
   },
 };
 
