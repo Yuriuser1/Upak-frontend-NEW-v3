@@ -27,15 +27,16 @@ function PaymentSuccessContent() {
     try {
       setLoading(true);
       const paymentId = searchParams.get('payment_id');
+      const orderId = searchParams.get('order_id');
       
-      if (!paymentId) {
-        setError('Отсутствует ID платежа');
+      if (!paymentId && !orderId) {
+        setError('Отсутствует ID платежа или заказа');
         return;
       }
 
       // Проверяем статус платежа на бэкенде
       const status = await fetchAuthJSON<PaymentStatus>(
-        `/payments/status?payment_id=${paymentId}`
+        `/payments/status?${paymentId ? `payment_id=${paymentId}` : `order_id=${orderId}`}`
       );
       
       setPaymentStatus(status);
