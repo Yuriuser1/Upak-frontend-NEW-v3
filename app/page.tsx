@@ -219,7 +219,7 @@ function OrderForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.package || !formData.prompt || !formData.marketplace) {
+    if (!formData.package || !formData.prompt || !formData.marketplace || !formData.email) {
       toast.error('Пожалуйста, заполните обязательные поля');
       return;
     }
@@ -334,6 +334,7 @@ function OrderForm() {
               placeholder="your@email.com"
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
+              required
             />
           </div>
 
