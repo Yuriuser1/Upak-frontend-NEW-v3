@@ -4,30 +4,23 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MessageCircle, ExternalLink } from 'lucide-react';
+import { Mail, MessageCircle, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const contacts = [
   {
     icon: Mail,
     title: 'Email',
-    value: 'support@upak.space',
-    href: 'mailto:support@upak.space',
+    value: 'info@upak.space',
+    href: 'mailto:info@upak.space',
     description: 'Для любых вопросов и предложений',
-  },
-  {
-    icon: Phone,
-    title: 'Телефон',
-    value: '+7 (999) 123-45-67',
-    href: 'tel:+79991234567',
-    description: 'Звоните в рабочее время',
   },
   {
     icon: MessageCircle,
     title: 'Telegram',
-    value: '@upak_support',
-    href: 'https://t.me/upak_support',
-    description: 'Быстрые ответы в мессенджере',
+    value: 'SellEasyBot',
+    href: 'https://t.me/SellEasyBot',
+    description: 'Быстрое оформление и ручные вопросы',
   },
 ];
 
@@ -51,7 +44,7 @@ export default function ContactPage() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-16">
           {contacts.map((contact, index) => (
             <motion.div
               key={contact.title}
@@ -86,8 +79,8 @@ export default function ContactPage() {
         >
           <h3 className="text-xl font-semibold mb-3">Время работы</h3>
           <p className="text-muted-foreground">
-            Поддержка в Telegram — <strong>24/7</strong><br />
-            Обработка email-запросов — <strong>Пн–Пт, 9:00–18:00 (МСК)</strong>
+            Telegram — быстрые ответы по мере запуска проекта<br />
+            Email-запросы — <strong>Пн-Пт, 9:00-18:00 (МСК)</strong>
           </p>
         </motion.div>
       </main>

@@ -1,238 +1,136 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import {
+  ArrowRight,
+  Bot,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  ExternalLink,
+  FileText,
+  Mail,
+  MessageCircle,
+  Package,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Target,
+} from 'lucide-react';
+
+import { API_BASE } from '@/lib/api';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Image from 'next/image';
-import { 
-  Package, 
-  Zap, 
-  Star, 
-  TrendingUp, 
-  Shield, 
-  Clock,
-  CheckCircle,
-  BarChart3,
-  Users,
-  Sparkles,
-  Target,
-  Award,
-  FileText,
-  Image as ImageIcon,
-  Download,
-  Headphones,
-  User2,
-  Quote,
-  Crown,
-  ArrowRight,
-  ExternalLink,
-  Menu,
-  Bot,
-  Camera
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { API_BASE } from '@/lib/api';
+import { Textarea } from '@/components/ui/textarea';
 
-const TIERS = {
-  start: {
+const TELEGRAM_URL = 'https://t.me/SellEasyBot';
+
+const paidPackages = [
+  { value: 'start', label: 'Start - 349 руб., 1 карточка' },
+  { value: 'pro', label: 'Pro 10 - 2 490 руб., 10 карточек' },
+  { value: 'business30', label: 'Business 30 - 5 990 руб., 30 карточек' },
+  { value: 'expert1', label: 'Проверка специалистом - 790 руб.' },
+  { value: 'expert10', label: 'Проверка 10 карточек - 4 990 руб.' },
+];
+
+const tariffs = [
+  {
+    key: 'start',
     name: 'Start',
-    price: '349₽',
-    priceNote: 'за карточку',
-    description: 'Для тестирования и небольших объёмов: карточка готова за минуты. Нейросеть генерирует уникальные описания, строго соблюдая требования Wildberries и Ozon.',
-    features: [
-      'Карточка готова за 5 минут',
-      'Уникальные описания от нейросети',
-      'Соответствие требованиям WB/Ozon',
-      'PDF-карточка для загрузки',
-      'Техническое задание',
-      'Поддержка 24/7'
-    ],
+    price: '349 руб.',
+    note: '1 карточка',
+    description: 'Низкий входной чек для проверки качества на одном товаре.',
+    features: ['Название товара', 'SEO-описание', 'Преимущества', 'Блок характеристик', 'PDF/ТЗ для работы'],
     icon: Star,
-    popular: false
+    popular: false,
   },
-  pro: {
-    name: 'Pro',
-    price: '2,490₽',
-    priceNote: 'за 10 карточек (249₽/шт)',
-    description: 'Для активных селлеров: 10 карточек по выгодной цене. Приоритетная очередь, хранение PDF 2 месяца и всё, что в пакете Start.',
-    features: [
-      'Всё из пакета Start',
-      '10 карточек по цене 249₽/шт',
-      'Приоритетная очередь обработки',
-      'Хранение PDF файлов 2 месяца',
-      'Расширенная поддержка',
-      'Скидка 30% на дополнительные карточки'
-    ],
-    icon: Crown,
-    popular: true
-  }
-};
-
-const heroStats = [
-  { number: '5 мин', label: 'время создания' },
-  { number: 'от 349₽', label: 'стоимость' }, 
-  { number: '24/7', label: 'поддержка' }
+  {
+    key: 'pro',
+    name: 'Pro 10',
+    price: '2 490 руб.',
+    note: '249 руб. за карточку',
+    description: 'Основной тариф для селлеров, которым нужно быстро обновить линейку товаров.',
+    features: ['10 карточек', 'Единая структура для WB/Ozon', 'Рекомендации для фото', 'Приоритетная обработка', 'Файлы хранятся 2 месяца'],
+    icon: Package,
+    popular: true,
+  },
+  {
+    key: 'business30',
+    name: 'Business 30',
+    price: '5 990 руб.',
+    note: 'для объема',
+    description: 'Для менеджеров маркетплейсов, фотостудий и селлеров с регулярным потоком SKU.',
+    features: ['30 карточек', 'Единый стиль карточек', 'Можно оформить через Telegram', 'Подходит для партнерских запусков', 'Экономия на каждой карточке'],
+    icon: Briefcase,
+    popular: false,
+  },
+  {
+    key: 'expert10',
+    name: 'Проверка специалистом',
+    price: 'от 790 руб.',
+    note: 'ручной upsell',
+    description: 'Ручная проверка структуры, SEO и понятности карточки перед публикацией.',
+    features: ['790 руб. за 1 карточку', '4 990 руб. за 10 карточек', 'Список правок', 'Проверка рисковых формулировок', 'Рекомендации для инфографики'],
+    icon: ShieldCheck,
+    popular: false,
+  },
 ];
 
-const keyPoints = [
-  {
-    icon: TrendingUp,
-    number: '700,000',
-    title: 'селлеров конкурируют',
-    description: 'на крупных площадках к концу 2024 года. Выделиться можно только грамотной подачей товара.'
-  },
-  {
-    icon: Target,
-    number: '20%',
-    title: 'лучших карточек',
-    description: 'генерируют 80% продаж в своей нише. Попадание в лидеры — результат профессионального подхода.'
-  },
-  {
-    icon: Users,
-    number: 'Миллионы',
-    title: 'позиций товаров',
-    description: 'покупатели выбирают именно те, чьи страницы оформлены наиболее привлекательно и информативно.'
-  },
-  {
-    icon: Award,
-    number: 'Топ-карточка',
-    title: 'требует комплексной работы',
-    description: 'аналитика ниши, SEO-оптимизация, высококачественные фото/видео и инфографика.'
-  }
+const resultBlocks = [
+  'Название товара под WB/Ozon',
+  'SEO-описание без пустых обещаний',
+  '3-7 преимуществ для первого экрана',
+  'Блок характеристик и структуры',
+  'Рекомендации для фото и инфографики',
+  'PDF или структурированный файл для работы',
 ];
 
-const services = [
-  {
-    icon: Bot,
-    title: 'Российская нейросеть для контента',
-    description: 'Отечественный AI создаёт уникальные тексты за минуты, адаптированные под российские маркетплейсы и менталитет покупателей',
-    features: ['Уникальные заголовки за 5 минут', 'SEO под российские запросы', 'Соответствие требованиям WB/Ozon', 'Техническое задание']
-  },
-  {
-    icon: Camera,
-    title: 'Профессиональная обработка фото',
-    description: 'Быстрая AI-обработка изображений с учётом стандартов российских маркетплейсов и предпочтений покупателей',
-    features: ['Мгновенное улучшение качества', 'Удаление фона за секунды', 'Адаптация под WB/Ozon', 'Российские стандарты качества']
-  },
-  {
-    icon: FileText,
-    title: 'Готовые файлы за минуты',
-    description: 'Мгновенное создание PDF-карточек и файлов для загрузки, полностью готовых для российских маркетплейсов',
-    features: ['PDF-карточки за 5 минут', 'Файлы для WB/Ozon/Яндекс.Маркет', 'Соответствие всем требованиям', 'Готово к загрузке']
-  }
+const channelBlocks = [
+  { title: 'Telegram и VK', text: 'Быстрые посты с preview, ручная консультация и оформление пакетов.' },
+  { title: 'Avito', text: 'Оффер для селлеров: карточка товара за 349 руб. или пакет 10 карточек.' },
+  { title: 'Партнеры', text: 'Фотостудии, фулфилменты, курсы и менеджеры маркетплейсов с комиссией за клиента.' },
 ];
 
-const processes = [
-  {
-    icon: Clock,
-    title: 'Быстрое создание',
-    description: 'От 5 минут до готовой карточки'
-  },
-  {
-    icon: Zap,
-    title: 'Автоматизация',
-    description: 'Минимум ручной работы'
-  },
-  {
-    icon: Target,
-    title: 'Точность',
-    description: 'Соответствие требованиям площадок'
-  }
-];
-
-const examples = [
-  {
-    name: 'Умные часы Apple Watch Series 9',
-    image: 'https://www.apple.com/newsroom/images/2023/09/apple-introduces-the-advanced-new-apple-watch-series-9/article/Apple-Watch-S9-graphite-stainless-steel-FineWoven-Magenetic-Link-green-230912_inline.jpg.large_2x.jpg',
-    category: 'Электроника',
-    rating: 4.8,
-    reviews: 1247,
-    price: '45,990₽',
-    features: ['Датчик кислорода', 'GPS + Cellular', 'Защита от воды'],
-    stats: { views: '+340%', conversion: '+85%', position: 'Топ-5' }
-  },
-  {
-    name: 'Кроссовки Nike Air Max 270',
-    image: 'https://d2ob0iztsaxy5v.cloudfront.net/product/340919/3409193160m7_zm.jpg',
-    category: 'Спорт и отдых',
-    rating: 4.7,
-    reviews: 892,
-    price: '12,990₽',
-    features: ['Технология Air Max', 'Дышащий материал', 'Легкая подошва'],
-    stats: { views: '+280%', conversion: '+72%', position: 'Топ-3' }
-  },
-  {
-    name: 'Смартфон Samsung Galaxy S24',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Samsung_Galaxy_S24%2C_Sperrbildschirm.JPG',
-    category: 'Электроника',
-    rating: 4.9,
-    reviews: 1543,
-    price: '89,990₽',
-    features: ['AI-камера 200MP', '120Hz дисплей', '5000mAh батарея'],
-    stats: { views: '+420%', conversion: '+95%', position: 'Топ-1' }
-  }
-];
-
-const testimonials = [
-  {
-    name: 'Анна Козлова',
-    role: 'Основатель магазина детской одежды',
-    image: 'https://i.pinimg.com/originals/f9/f4/a9/f9f4a9ab04a9e13aaac330a0e4d2c438.jpg',
-    quote: 'UPAK полностью изменил мой подход к маркетплейсам. Продажи выросли на 300% за первые два месяца! Теперь мои карточки всегда в топе поиска.'
-  },
-  {
-    name: 'Максим Петров',
-    role: 'Селлер электроники',
-    image: 'https://i.pinimg.com/originals/21/76/78/217678f7eb0ebcae251430dda3529ff0.jpg',
-    quote: 'Раньше на создание одной карточки уходило 2-3 дня. Теперь получаю готовый результат за 5 минут. Качество на высоте, поддержка отличная.'
-  },
-  {
-    name: 'Елена Смирнова',
-    role: 'Владелица бренда косметики',
-    image: 'https://i.pinimg.com/originals/9e/c4/a7/9ec4a7d81442d0183cf332ce959dc310.jpg',
-    quote: 'Pro-тариф окупился за первую неделю. Персональный менеджер помог настроить всю линейку товаров. Результат превзошел ожидания!'
-  }
-];
-
-// Order Form Component
-function OrderForm() {
+function OrderForm({ children, defaultPackage = 'start' }: { children?: ReactNode; defaultPackage?: string }) {
   const [formData, setFormData] = useState({
-    package: '',
+    package: defaultPackage,
     prompt: '',
     marketplace: '',
     price: '',
     email: '',
     telegram: '',
-    image_file: null as File | null
+    image_file: null as File | null,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!formData.package || !formData.prompt || !formData.marketplace || !formData.email) {
-      toast.error('Пожалуйста, заполните обязательные поля');
+      toast.error('Заполните тариф, товар, площадку и email');
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       const form = new FormData();
       form.append('package', formData.package);
       form.append('prompt', formData.prompt);
       form.append('marketplace', formData.marketplace);
+      form.append('email', formData.email);
       if (formData.price) form.append('price', formData.price);
-      if (formData.email) form.append('email', formData.email);
       if (formData.telegram) form.append('telegram', formData.telegram);
       if (formData.image_file) form.append('image_file', formData.image_file);
 
@@ -242,24 +140,24 @@ function OrderForm() {
         credentials: 'include',
         method: 'POST',
         body: form,
-        signal: controller.signal
+        signal: controller.signal,
       });
       window.clearTimeout(timeoutId);
 
-      if (response.ok) {
-        const result = await response.json();
-        toast.success('Заказ создан успешно!');
-        const paymentUrl = result.payment_url || result.confirmation_url;
-        if (paymentUrl) {
-          window.open(paymentUrl, '_blank');
-        }
-        setIsOpen(false);
-      } else {
-        throw new Error('Ошибка при создании заказа');
+      if (!response.ok) {
+        throw new Error('payment_failed');
       }
-    } catch (error) {
-      toast.error('API временно недоступен. Откроем Telegram для ручного оформления заказа.');
-      window.open(`https://t.me/SellEasyBot?start=site_order_${formData.package || 'start'}`, '_blank');
+
+      const result = await response.json();
+      const paymentUrl = result.payment_url || result.confirmation_url;
+      toast.success('Заказ создан. Открываем оплату.');
+      if (paymentUrl) {
+        window.open(paymentUrl, '_blank');
+      }
+      setIsOpen(false);
+    } catch {
+      toast.error('Онлайн-оплата временно недоступна. Откроем Telegram для ручного оформления.');
+      window.open(`${TELEGRAM_URL}?start=site_order_${formData.package || 'start'}`, '_blank');
     } finally {
       setIsLoading(false);
     }
@@ -268,98 +166,94 @@ function OrderForm() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 text-lg font-semibold">
-          Создать карточку
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
+        {children || (
+          <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-500">
+            Оплатить полный результат
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Создать карточку товара</DialogTitle>
+          <DialogTitle>Оформить UPAK</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="package">Тариф *</Label>
-            <Select value={formData.package} onValueChange={(value) => setFormData({...formData, package: value})}>
+            <Select value={formData.package} onValueChange={(value) => setFormData({ ...formData, package: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Выберите тариф" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="start">Start - 349₽</SelectItem>
-                <SelectItem value="pro">Pro - 2,490₽ за 10 карточек</SelectItem>
+                {paidPackages.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div>
             <Label htmlFor="marketplace">Маркетплейс *</Label>
-            <Select value={formData.marketplace} onValueChange={(value) => setFormData({...formData, marketplace: value})}>
+            <Select value={formData.marketplace} onValueChange={(value) => setFormData({ ...formData, marketplace: value })}>
               <SelectTrigger>
-                <SelectValue placeholder="Выберите маркетплейс" />
+                <SelectValue placeholder="Выберите площадку" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="wb">Wildberries</SelectItem>
-                <SelectItem value="ozon">Ozon</SelectItem>
+                <SelectItem value="Wildberries">Wildberries</SelectItem>
+                <SelectItem value="Ozon">Ozon</SelectItem>
+                <SelectItem value="Яндекс Маркет">Яндекс Маркет</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="prompt">Описание товара *</Label>
+            <Label htmlFor="prompt">Товар *</Label>
             <Textarea
               id="prompt"
-              placeholder="Опишите ваш товар подробно..."
+              className="min-h-[110px]"
+              placeholder="Например: женская демисезонная куртка с капюшоном, размеры 42-52, водоотталкивающая ткань..."
               value={formData.prompt}
-              onChange={(e) => setFormData({...formData, prompt: e.target.value})}
-              className="min-h-[100px]"
+              onChange={(event) => setFormData({ ...formData, prompt: event.target.value })}
             />
           </div>
 
-          <div>
-            <Label htmlFor="price">Цена товара</Label>
-            <Input
-              id="price"
-              type="number"
-              placeholder="Введите цену"
-              value={formData.price}
-              onChange={(e) => setFormData({...formData, price: e.target.value})}
-            />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="email">Email для чека *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.ru"
+                value={formData.email}
+                onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="telegram">Telegram</Label>
+              <Input
+                id="telegram"
+                placeholder="@username"
+                value={formData.telegram}
+                onChange={(event) => setFormData({ ...formData, telegram: event.target.value })}
+              />
+            </div>
           </div>
 
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="telegram">Telegram</Label>
-            <Input
-              id="telegram"
-              placeholder="@username"
-              value={formData.telegram}
-              onChange={(e) => setFormData({...formData, telegram: e.target.value})}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="image">Изображение товара</Label>
+            <Label htmlFor="image">Фото товара</Label>
             <Input
               id="image"
               type="file"
               accept="image/*"
-              onChange={(e) => setFormData({...formData, image_file: e.target.files?.[0] || null})}
+              onChange={(event) => setFormData({ ...formData, image_file: event.target.files?.[0] || null })}
             />
           </div>
 
           <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? 'Создание...' : 'Создать заказ'}
+            {isLoading ? 'Создаем заказ...' : 'Перейти к оплате'}
           </Button>
         </form>
       </DialogContent>
@@ -367,589 +261,351 @@ function OrderForm() {
   );
 }
 
-// Main Component
-export default function HomePage() {
-  const [isScrolled, setIsScrolled] = useState(false);
+function PreviewForm() {
+  const [formData, setFormData] = useState({ product: '', marketplace: 'Wildberries', email: '', telegram: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [preview, setPreview] = useState<null | {
+    title: string;
+    advantages: string[];
+    description_fragment: string;
+    next_step: string;
+  }>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!formData.product) {
+      toast.error('Опишите товар для preview');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/preview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('preview_failed');
+      }
+
+      const data = await response.json();
+      setPreview(data);
+      toast.success('Preview готов. Полную карточку можно оформить ниже.');
+    } catch {
+      toast.error('Preview временно недоступен. Напишите в Telegram, подготовим вручную.');
+      window.open(`${TELEGRAM_URL}?start=site_preview`, '_blank');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-sm' : 'bg-transparent'}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="relative w-8 h-8">
-                <Image alt="UPAK Logo" fill className="object-contain" src="/upak_logo.png" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                UPAK
-              </span>
+    <Card className="border-blue-500/30 bg-white text-slate-950 shadow-2xl">
+      <CardHeader>
+        <Badge className="mb-2 w-fit bg-blue-100 text-blue-700 hover:bg-blue-100">Бесплатный preview</Badge>
+        <CardTitle className="text-2xl">Получите черновик карточки</CardTitle>
+        <CardDescription>
+          Короткое название, 3 преимущества и фрагмент описания. Полный PDF/ТЗ остается в платном результате.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Textarea
+            className="min-h-[110px]"
+            placeholder="Опишите товар, аудиторию, важные свойства и площадку"
+            value={formData.product}
+            onChange={(event) => setFormData({ ...formData, product: event.target.value })}
+          />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Select value={formData.marketplace} onValueChange={(value) => setFormData({ ...formData, marketplace: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Площадка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Wildberries">Wildberries</SelectItem>
+                <SelectItem value="Ozon">Ozon</SelectItem>
+                <SelectItem value="Яндекс Маркет">Яндекс Маркет</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              type="email"
+              placeholder="Email для результата"
+              value={formData.email}
+              onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+            />
+          </div>
+          <Input
+            placeholder="Telegram для связи, если нужен ручной разбор"
+            value={formData.telegram}
+            onChange={(event) => setFormData({ ...formData, telegram: event.target.value })}
+          />
+          <Button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-500">
+            {isLoading ? 'Готовим preview...' : 'Получить бесплатный preview'}
+          </Button>
+        </form>
+
+        {preview && (
+          <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left">
+            <p className="mb-3 text-sm font-semibold text-slate-500">Ваш preview</p>
+            <h3 className="mb-3 text-lg font-bold text-slate-950">{preview.title}</h3>
+            <ul className="mb-3 space-y-2">
+              {preview.advantages.map((advantage) => (
+                <li key={advantage} className="flex gap-2 text-sm text-slate-700">
+                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+                  {advantage}
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-slate-700">{preview.description_fragment}</p>
+            <p className="mt-3 text-sm font-medium text-blue-700">{preview.next_step}</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative h-9 w-9">
+              <Image alt="UPAK" fill className="object-contain" src="/upak_logo.png" />
             </div>
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#services" className="text-gray-300 hover:text-blue-400 transition-colors duration-200 font-medium">Услуги</a>
-              <a href="#pricing" className="text-gray-300 hover:text-blue-400 transition-colors duration-200 font-medium">Тарифы</a>
-              <a href="#examples" className="text-gray-300 hover:text-blue-400 transition-colors duration-200 font-medium">Примеры работ</a>
-              <a href="#testimonials" className="text-gray-300 hover:text-blue-400 transition-colors duration-200 font-medium">Отзывы</a>
-              <a href="#contact" className="text-gray-300 hover:text-blue-400 transition-colors duration-200 font-medium">Контакты</a>
-            </nav>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:flex items-center space-x-4">
-                <OrderForm />
-                <Button asChild variant="default">
-                  <Link href="/login">
-                    Войти
-                  </Link>
-                </Button>
-                <Button variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Telegram
-                </Button>
-              </div>
-              <div className="flex sm:hidden items-center space-x-2">
-                <OrderForm />
-                <Button asChild size="sm" variant="default">
-                  <Link href="/login">
-                    Войти
-                  </Link>
-                </Button>
-                <Button variant="outline" size="sm" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white px-2">
-                  <ExternalLink className="w-3 h-3" />
-                </Button>
-              </div>
-              <Button variant="ghost" className="md:hidden text-gray-300 hover:text-blue-400 ml-2">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </div>
+            <span className="text-xl font-bold">UPAK</span>
+          </Link>
+          <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
+            <a href="#preview" className="hover:text-white">Preview</a>
+            <a href="#result" className="hover:text-white">Что получите</a>
+            <a href="#pricing" className="hover:text-white">Тарифы</a>
+            <a href="#channels" className="hover:text-white">Запуск продаж</a>
+          </nav>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline" className="hidden border-white/20 bg-transparent text-white hover:bg-white hover:text-slate-950 sm:inline-flex">
+              <a href={TELEGRAM_URL} target="_blank" rel="noreferrer">
+                Telegram
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+            <OrderForm>
+              <Button className="bg-blue-600 text-white hover:bg-blue-500">Оплатить</Button>
+            </OrderForm>
           </div>
         </div>
       </header>
 
-      <div className="pt-16">
-        {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-gray-900 to-gray-900" />
-          <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
-          </div>
-          <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="space-y-8">
-              <motion.h1 
-                className="text-4xl md:text-6xl font-bold leading-tight"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <span className="text-white">Отечественный AI для</span>
-                <br />
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  продающих карточек маркетплейсов
-                </span>
-              </motion.h1>
-              
-              <motion.p 
-                className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <span className="text-blue-400 font-semibold">Карточка готова за 5 минут!</span>
-                <br />
-                Российская нейросеть, адаптированная под требования Wildberries и Ozon. Уникальные тексты, которые продают.
-              </motion.p>
-
-              <motion.div 
-                className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <OrderForm />
-                <Button variant="outline" size="lg" className="border-2 border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold">
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  Начать в Telegram
-                </Button>
-              </motion.div>
-
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                {heroStats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <motion.div 
-                      className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-                    >
-                      {stat.number}
-                    </motion.div>
-                    <div className="text-gray-400 text-sm uppercase tracking-wider mt-2">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-            <div className="w-6 h-10 border-2 border-blue-400 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-blue-400 rounded-full mt-2 animate-bounce" />
-            </div>
-          </div>
-        </section>
-
-        {/* Key Points Section */}
-        <section className="py-20 bg-gray-800">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Ключ к успешным </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">продажам</span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-4xl mx-auto">
-                Высокое качество карточки товара на маркетплейсе – необходимое условие для успешных продаж
+      <main>
+        <section id="preview" className="relative overflow-hidden py-16 sm:py-20">
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,0.2),rgba(15,23,42,0)_45%)]" />
+          <div className="relative mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col justify-center">
+              <Badge className="mb-5 w-fit bg-blue-500/15 text-blue-200 hover:bg-blue-500/15">
+                Карточка товара за 5 минут для WB/Ozon
+              </Badge>
+              <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+                Быстрая упаковка товара для маркетплейсов без обещаний “топ-1”
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+                UPAK делает практичный черновик карточки: название, SEO-описание, преимущества, структуру характеристик и ТЗ для визуала. Сначала можно бесплатно посмотреть preview.
               </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="#preview-form">
+                  <Button size="lg" className="w-full bg-blue-600 text-white hover:bg-blue-500 sm:w-auto">
+                    Получить бесплатный preview
+                    <Sparkles className="ml-2 h-5 w-5" />
+                  </Button>
+                </a>
+                <OrderForm>
+                  <Button size="lg" variant="outline" className="w-full border-white/20 bg-transparent text-white hover:bg-white hover:text-slate-950 sm:w-auto">
+                    Оплатить полный результат
+                  </Button>
+                </OrderForm>
+              </div>
+              <div className="mt-8 grid grid-cols-3 gap-3 text-sm">
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div className="font-semibold text-white">от 349 руб.</div>
+                  <div className="text-slate-400">низкий старт</div>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div className="font-semibold text-white">5 минут</div>
+                  <div className="text-slate-400">первый результат</div>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div className="font-semibold text-white">WB/Ozon</div>
+                  <div className="text-slate-400">фокус РФ</div>
+                </div>
+              </div>
             </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {keyPoints.map((point, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gray-900 rounded-xl p-8 hover:bg-gray-900/80 transition-all duration-300 border border-gray-700 hover:border-blue-500/50 group"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-500 transition-colors duration-300">
-                        <point.icon className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                        {point.number}
-                      </div>
-                      <h3 className="text-lg font-semibold text-white mb-3">{point.title}</h3>
-                      <p className="text-gray-400 leading-relaxed">{point.description}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="text-center mt-12 p-8 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl border border-blue-500/20"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-lg text-gray-300">
-                В условиях жесткой конкуренции исследования показывают, что
-                <span className="text-blue-400 font-semibold"> лишь качественный подход к созданию карточек </span>
-                позволяет выделиться среди сотен тысяч продавцов и получить желаемый результат.
-              </p>
+            <motion.div id="preview-form" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+              <PreviewForm />
             </motion.div>
           </div>
         </section>
 
-        {/* Services Section */}
-        <section id="services" className="py-20 bg-gray-900">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Наши </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">услуги</span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Полный спектр услуг для создания продающих карточек товаров
+        <section id="result" className="bg-white py-16 text-slate-950">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-bold sm:text-4xl">Что именно вы получите после оплаты</h2>
+              <p className="mt-4 text-lg text-slate-600">
+                Мы продаем не “текст от нейросети”, а структуру карточки, которую можно передать менеджеру, дизайнеру или использовать самому.
               </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-              {services.map((service, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gray-800 rounded-xl p-8 hover:bg-gray-800/80 transition-all duration-300 border border-gray-700 hover:border-blue-500/50 group hover:shadow-xl hover:shadow-blue-500/10"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="mb-6">
-                    <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors duration-300 mb-4">
-                      <service.icon className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                    <p className="text-gray-400 leading-relaxed mb-6">{service.description}</p>
-                  </div>
-                  <ul className="space-y-3">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-gray-300">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full mr-3" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
+            </div>
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {resultBlocks.map((item) => (
+                <div key={item} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+                  <CheckCircle className="mb-3 h-6 w-6 text-green-600" />
+                  <div className="font-semibold">{item}</div>
+                </div>
               ))}
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {processes.map((process, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl p-6 border border-blue-500/20 text-center"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <process.icon className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <h4 className="font-semibold text-white mb-2">{process.title}</h4>
-                  <p className="text-gray-400 text-sm">{process.description}</p>
-                </motion.div>
-              ))}
+            <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-5 text-blue-950">
+              <ShieldCheck className="mb-3 h-6 w-6 text-blue-700" />
+              <p className="font-semibold">Гарантия запуска</p>
+              <p className="mt-1 text-sm leading-6">
+                Если результат технически некорректен или не соответствует оплаченному составу, бесплатно переделаем. Мы не обещаем место в поиске или рост продаж, потому что это зависит от цены, отзывов, рекламы, остатков и конкуренции.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section id="pricing" className="py-20 bg-gray-800">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Выберите </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">тариф</span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Гибкие условия для любых потребностей вашего бизнеса
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {Object.entries(TIERS).map(([key, tier], index) => (
-                <motion.div
-                  key={key}
-                  className={`relative bg-gray-900 rounded-2xl p-8 border transition-all duration-300 hover:shadow-2xl ${
-                    tier.popular ? 'border-blue-500/50 hover:border-blue-400/70 shadow-lg shadow-blue-500/10' : 'border-gray-700 hover:border-blue-500/30'
-                  }`}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  {tier.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                        Популярный
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="text-center mb-8">
-                    <div className={`w-16 h-16 ${tier.popular ? 'bg-blue-600' : 'bg-gray-700'} rounded-xl flex items-center justify-center mx-auto mb-4`}>
-                      <tier.icon className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                    <div className="mb-4">
-                      <span className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                        {tier.price}
-                      </span>
-                      {tier.priceNote && <span className="text-gray-400 ml-2">{tier.priceNote}</span>}
-                    </div>
-                    <p className="text-gray-400">{tier.description}</p>
-                  </div>
-                  
-                  <ul className="space-y-4 mb-8">
-                    {tier.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-gray-300">
-                        <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <OrderForm />
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="text-center mt-12 p-6 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl border border-blue-500/20"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-gray-300 mb-4">
-                <span className="text-blue-400 font-semibold">Бесплатное тестирование</span> - 
-                создайте первую карточку и убедитесь в качестве нашего сервиса
-              </p>
-              <OrderForm />
-            </motion.div>
+        <section className="bg-slate-100 py-16 text-slate-950">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
+            <Card>
+              <CardHeader>
+                <Bot className="mb-2 h-8 w-8 text-blue-600" />
+                <CardTitle>AI-черновик</CardTitle>
+              </CardHeader>
+              <CardContent className="text-slate-600">Быстро собирает основу карточки, чтобы не начинать с пустого листа.</CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <Search className="mb-2 h-8 w-8 text-blue-600" />
+                <CardTitle>SEO и структура</CardTitle>
+              </CardHeader>
+              <CardContent className="text-slate-600">Фокус на понятных запросах, преимуществах и характеристиках для покупателя.</CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <FileText className="mb-2 h-8 w-8 text-blue-600" />
+                <CardTitle>Файл для работы</CardTitle>
+              </CardHeader>
+              <CardContent className="text-slate-600">Результат удобно передать дизайнеру, менеджеру маркетплейса или загрузить в рабочий процесс.</CardContent>
+            </Card>
           </div>
         </section>
 
-        {/* Examples Section */}
-        <section id="examples" className="py-20 bg-gray-900">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Примеры наших </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">работ</span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Посмотрите на результаты наших клиентов и убедитесь в эффективности наших карточек
+        <section id="pricing" className="bg-slate-950 py-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-bold sm:text-4xl">Тарифы на первые 90 дней</h2>
+              <p className="mt-4 text-lg text-slate-300">
+                Сетка собрана под быстрый старт продаж: бесплатный preview, низкий первый чек, пакетный Pro и ручной upsell.
               </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {examples.map((example, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gray-800 rounded-xl overflow-hidden hover:bg-gray-800/80 transition-all duration-300 border border-gray-700 hover:border-blue-500/50 group hover:shadow-xl hover:shadow-blue-500/10"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="relative aspect-square bg-gray-700">
-                    <Image
-                      alt={example.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      src={example.image}
-                    />
-                    <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1 text-sm text-white">
-                      {example.category}
+            </div>
+            <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-4">
+              {tariffs.map((tier) => (
+                <Card key={tier.key} className={`relative bg-white text-slate-950 ${tier.popular ? 'border-blue-500 shadow-xl shadow-blue-500/10' : ''}`}>
+                  {tier.popular && <Badge className="absolute -top-3 left-4 bg-blue-600 text-white hover:bg-blue-600">Основной тариф</Badge>}
+                  <CardHeader>
+                    <tier.icon className="mb-3 h-8 w-8 text-blue-600" />
+                    <CardTitle>{tier.name}</CardTitle>
+                    <CardDescription>{tier.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="mb-5">
+                      <div className="text-3xl font-bold">{tier.price}</div>
+                      <div className="text-sm text-slate-500">{tier.note}</div>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-2">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-gray-300 text-sm">{example.rating}</span>
-                        <span className="text-gray-500 text-sm">({example.reviews})</span>
-                      </div>
-                      <span className="text-blue-400 font-semibold">{example.price}</span>
-                    </div>
-                    <h3 className="font-semibold text-white mb-3 line-clamp-2">{example.name}</h3>
-                    <ul className="space-y-1 mb-4">
-                      {example.features.map((feature, idx) => (
-                        <li key={idx} className="text-gray-400 text-sm flex items-center">
-                          <div className="w-1 h-1 bg-blue-400 rounded-full mr-2" />
+                    <ul className="mb-6 space-y-3">
+                      {tier.features.map((feature) => (
+                        <li key={feature} className="flex gap-2 text-sm text-slate-700">
+                          <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
                           {feature}
                         </li>
                       ))}
                     </ul>
-                    <div className="border-t border-gray-700 pt-4">
-                      <div className="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                          <div className="text-green-400 font-semibold text-sm">{example.stats.views}</div>
-                          <div className="text-gray-500 text-xs">просмотры</div>
-                        </div>
-                        <div>
-                          <div className="text-blue-400 font-semibold text-sm">{example.stats.conversion}</div>
-                          <div className="text-gray-500 text-xs">конверсия</div>
-                        </div>
-                        <div>
-                          <div className="text-purple-400 font-semibold text-sm">{example.stats.position}</div>
-                          <div className="text-gray-500 text-xs">позиция</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="text-center mt-12"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-xl font-medium text-white mb-6">
-                Готовы получить такие же результаты для своих товаров?
-              </p>
-              <OrderForm />
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Testimonials Section */}
-        <section id="testimonials" className="py-20 bg-gradient-to-br from-gray-800 to-gray-900">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Отзывы наших </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">клиентов</span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Узнайте, как UPAK помог тысячам селлеров увеличить продажи и выйти в топ
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gray-900 rounded-xl p-6 border border-gray-700 hover:border-blue-500/50 transition-all duration-300"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="relative w-12 h-12 mr-4">
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover rounded-full"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-400">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  <Quote className="w-6 h-6 text-blue-500 mb-2" />
-                  <p className="text-sm text-gray-300 leading-relaxed">{testimonial.quote}</p>
-                </motion.div>
+                    <OrderForm defaultPackage={tier.key}>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-500">Оформить</Button>
+                    </OrderForm>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Contact Section */}
-        <section id="contact" className="py-20 bg-gray-900">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-white">Готовы </span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  увеличить продажи?
-                </span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-                Присоединяйтесь к успешным селлерам, которые уже используют UPAK для создания продающих карточек
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <OrderForm />
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-gray-900">
-                  Связаться с нами
-                </Button>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
+        <section id="channels" className="bg-white py-16 text-slate-950">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
               <div>
-                <h4 className="font-semibold text-white mb-2">Telegram</h4>
-                <p className="text-gray-400 text-sm">Поддержка в Telegram работает 24/7</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-2">Email</h4>
-                <p className="text-gray-400 text-sm">info@upak.space</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-2">Телефон</h4>
-                <p className="text-gray-400 text-sm">+7 (800) 123-45-67</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-2">Время работы</h4>
-                <p className="text-gray-400 text-sm">24/7</p>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="py-12 bg-gray-800 border-t border-gray-700">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="flex items-center space-x-3 mb-4 md:mb-0">
-                <div className="relative w-8 h-8">
-                  <Image alt="UPAK Logo" fill className="object-contain" src="/upak_logo.png" />
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  UPAK
-                </span>
-              </div>
-              <div className="text-center md:text-right">
-                <p className="text-gray-400 text-sm">
-                  © 2024 UPAK. Все права защищены. Создание продающих карточек для маркетплейсов.
+                <Badge className="mb-4 bg-slate-100 text-slate-700 hover:bg-slate-100">План продаж</Badge>
+                <h2 className="text-3xl font-bold sm:text-4xl">Запускаем через каналы с низкой стоимостью лида</h2>
+                <p className="mt-4 text-lg text-slate-600">
+                  До подтверждения конверсии не тратим крупный бюджет на бренд-рекламу. Ставка на Telegram, VK, Avito и партнеров, где можно быстро объяснить ценность preview.
                 </p>
-                <p className="text-gray-500 text-xs mt-1">
-                  Создавайте продающие карточки товаров для маркетплейсов с помощью AI. Быстро, качественно и по доступной цене.
-                </p>
+              </div>
+              <div className="grid gap-4">
+                {channelBlocks.map((block) => (
+                  <div key={block.title} className="rounded-lg border border-slate-200 p-5">
+                    <Target className="mb-3 h-6 w-6 text-blue-600" />
+                    <h3 className="font-semibold">{block.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">{block.text}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </footer>
-      </div>
+        </section>
+
+        <section className="bg-slate-100 py-16 text-slate-950">
+          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+            <Clock className="mx-auto mb-4 h-9 w-9 text-blue-600" />
+            <h2 className="text-3xl font-bold">Готовы проверить товар?</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+              Начните с бесплатного preview. Если структура подходит, оплатите полный результат или отправьте товар на ручную проверку.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <a href="#preview-form">
+                <Button size="lg" className="w-full bg-blue-600 hover:bg-blue-500 sm:w-auto">Получить preview</Button>
+              </a>
+              <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
+                <a href={TELEGRAM_URL} target="_blank" rel="noreferrer">
+                  Написать в Telegram
+                  <MessageCircle className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/10 bg-slate-950 py-10 text-slate-300">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div>
+            <div className="flex items-center gap-3 text-white">
+              <div className="relative h-8 w-8">
+                <Image alt="UPAK" fill className="object-contain" src="/upak_logo.png" />
+              </div>
+              <span className="text-lg font-bold">UPAK</span>
+            </div>
+            <p className="mt-2 max-w-lg text-sm">Практичная упаковка карточек товаров для российских маркетплейсов.</p>
+          </div>
+          <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-5">
+            <span className="inline-flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              info@upak.space
+            </span>
+            <a className="inline-flex items-center gap-2 hover:text-white" href={TELEGRAM_URL} target="_blank" rel="noreferrer">
+              <MessageCircle className="h-4 w-4" />
+              Telegram
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

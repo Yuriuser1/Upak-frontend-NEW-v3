@@ -5,25 +5,40 @@ import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Star, Crown, ArrowRight } from 'lucide-react';
+import { Briefcase, CheckCircle, Crown, ShieldCheck, Star, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 const TIERS = [
   {
-    name: 'Start',
-    price: '349₽',
-    priceNote: 'за карточку',
-    description: 'Для тестирования и небольших объёмов: карточка готова за минуты.',
+    name: 'Free preview',
+    price: '0₽',
+    priceNote: 'лид-магнит',
+    description: 'Короткий пример названия, 3 преимущества и фрагмент описания.',
     icon: Star,
     popular: false,
     features: [
-      'Карточка готова за 5 минут',
-      'Уникальные описания от нейросети',
-      'Соответствие требованиям WB/Ozon',
-      'PDF-карточка для загрузки',
-      'Техническое задание',
-      'Поддержка 24/7',
+      'Без полной карточки',
+      'Показывает стиль результата',
+      'Помогает быстро оценить товар',
+      'Подходит для первого контакта',
+      'Дальше можно оплатить Start или Pro',
+    ],
+  },
+  {
+    name: 'Start',
+    price: '349₽',
+    priceNote: 'за карточку',
+    description: 'Для тестирования и небольших объемов: одна полная карточка.',
+    icon: CheckCircle,
+    popular: false,
+    features: [
+      'Название товара',
+      'SEO-описание',
+      'Преимущества',
+      'Блок характеристик',
+      'PDF/ТЗ для работы',
+      'Бесплатная переделка при технической ошибке',
     ],
   },
   {
@@ -34,12 +49,42 @@ const TIERS = [
     icon: Crown,
     popular: true,
     features: [
-      'Всё из пакета Start',
+      'Все из пакета Start',
       '10 карточек в пакете',
       'Приоритетная очередь',
       'Хранение PDF 2 месяца',
       'Скидка 29% на карточку',
-      'Приоритетная поддержка',
+      'Удобно для линейки товаров',
+    ],
+  },
+  {
+    name: 'Business 30',
+    price: '5 990₽',
+    priceNote: 'за 30 карточек',
+    description: 'Для менеджеров маркетплейсов, студий и селлеров с регулярным потоком SKU.',
+    icon: Briefcase,
+    popular: false,
+    features: [
+      '30 карточек',
+      'Единая структура для линейки',
+      'Оплата на сайте или через Telegram',
+      'Подходит для партнерских продаж',
+      'Низкая цена за карточку',
+    ],
+  },
+  {
+    name: 'Проверка специалистом',
+    price: 'от 790₽',
+    priceNote: 'ручная проверка',
+    description: 'Дополнительная проверка SEO, структуры и рисковых формулировок.',
+    icon: ShieldCheck,
+    popular: false,
+    features: [
+      '790₽ за 1 карточку',
+      '4 990₽ за 10 карточек',
+      'Список правок',
+      'Проверка понятности для покупателя',
+      'Рекомендации для инфографики',
     ],
   },
 ];
@@ -60,11 +105,11 @@ export default function PricingPage() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">тариф</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Гибкие условия для любых потребностей вашего бизнеса. Все тарифы включают AI-генерацию контента.
+            Тарифы собраны под запуск продаж в РФ: бесплатный preview, низкий первый чек, пакет Pro и ручная проверка как допродажа.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mx-auto mb-16">
           {TIERS.map((tier, index) => (
             <motion.div
               key={tier.name}
@@ -103,8 +148,8 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   <Button className="w-full" size="lg" asChild>
-                    <Link href="/login">
-                      Начать <ArrowRight className="w-4 h-4 ml-2" />
+                    <Link href="/#preview">
+                      Оформить <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
                   </Button>
                 </CardContent>
@@ -121,7 +166,7 @@ export default function PricingPage() {
         >
           <h3 className="text-xl font-semibold mb-3">Нужен индивидуальный тариф?</h3>
           <p className="text-muted-foreground mb-4">
-            Для крупных объёмов и корпоративных клиентов мы готовы предложить персональные условия.
+            Для объема больше 30 карточек, партнеров и ручной проверки напишите в Telegram. На старте не обещаем рост продаж или место в поиске, зато даем понятный результат и бесплатную переделку при технической ошибке.
           </p>
           <Button variant="outline" asChild>
             <Link href="/contact">Связаться с нами</Link>

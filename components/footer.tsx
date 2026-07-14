@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Package, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MessageCircle, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function Footer() {
@@ -22,7 +22,7 @@ export function Footer() {
               <span className="text-2xl font-bold">UPAK</span>
             </Link>
             <p className="text-slate-300 text-sm leading-relaxed">
-              Создание профессиональных карточек товаров для маркетплейсов Wildberries и OZON
+              Практичная упаковка карточек товаров для Wildberries, Ozon и Яндекс Маркета
             </p>
           </div>
 
@@ -61,11 +61,11 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-300 text-sm">
                 <Mail className="h-4 w-4 text-blue-400" />
-                <span>support@upak.space</span>
+                <span>info@upak.space</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-300 text-sm">
-                <Phone className="h-4 w-4 text-blue-400" />
-                <span>+7 (999) 123-45-67</span>
+                <MessageCircle className="h-4 w-4 text-blue-400" />
+                <span>Telegram: SellEasyBot</span>
               </div>
             </div>
           </div>
