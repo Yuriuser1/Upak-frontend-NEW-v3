@@ -1,7 +1,7 @@
 
 import { BackendApiResponse, BackendCreateOrderRequest, BackendOrderResponse } from './types';
 
-const API_BASE_URL = 'https://api.upak.space/v2';
+const API_BASE_URL = process.env.NEXT_PUBLIC_UPAK_API || '/v2';
 
 class ApiClient {
   private async makeRequest<T>(

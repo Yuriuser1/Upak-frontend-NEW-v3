@@ -18,6 +18,12 @@ from = "/api/*"
 to = "/.netlify/functions/__netlify-handler"
 status = 200
 
+[[redirects]]
+from = "/v2/*"
+to = "http://46.21.244.186/v2/:splat"
+status = 200
+force = true
+
 # Настройки для SSG
 [[headers]]
 for = "/*"

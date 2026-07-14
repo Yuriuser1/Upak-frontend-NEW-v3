@@ -1,9 +1,9 @@
 // lib/api.ts
 
-// Unified API client for UPAK frontend.  Automatically prefixes paths with NEXT_PUBLIC_API,
+// Unified API client for UPAK frontend.  Automatically prefixes paths with NEXT_PUBLIC_UPAK_API,
 // sends cookies via credentials: 'include', and supports both JSON and URL-encoded form bodies.
 
-export const API = (process.env.NEXT_PUBLIC_API || '').replace(/\/+$/, '');
+export const API = (process.env.NEXT_PUBLIC_UPAK_API || '/v2').replace(/\/+$/, '');
 export const API_BASE = API; // Backward compatibility alias
 
 export type ApiOptions = RequestInit & {
