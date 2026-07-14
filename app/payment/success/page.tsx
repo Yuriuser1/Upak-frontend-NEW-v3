@@ -35,7 +35,7 @@ function PaymentSuccessContent() {
 
       // Проверяем статус платежа на бэкенде
       const status = await fetchAuthJSON<PaymentStatus>(
-        `/v2/payments/status?payment_id=${paymentId}`
+        `/payments/status?payment_id=${paymentId}`
       );
       
       setPaymentStatus(status);

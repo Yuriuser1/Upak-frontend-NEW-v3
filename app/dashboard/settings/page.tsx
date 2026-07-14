@@ -38,7 +38,7 @@ export default function SettingsPage() {
     setLoading(true);
 
     try {
-      await api('/v2/auth/change-password', {
+      await api('/auth/change-password', {
         method: 'POST',
         json: {
           old_password: oldPassword,

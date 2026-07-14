@@ -60,9 +60,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Note: This endpoint returns 404 on the current backend
-      // This is a frontend implementation ready for when backend is fixed
-      await api('/v2/auth/register', {
+      await api('/auth/register', {
         method: 'POST',
         json: {
           email: formData.email,
@@ -76,7 +74,7 @@ export default function RegisterPage() {
       router.push('/login');
     } catch (err: any) {
       if (err.message.includes('404')) {
-        setError('Функция регистрации временно недоступна. Пожалуйста, обратитесь к администратору.');
+        setError('Регистрация временно недоступна. Напишите в Telegram @SellEasyBot, мы оформим доступ вручную.');
       } else if (err.message.includes('already exists')) {
         setError('Пользователь с таким email уже существует');
       } else {

@@ -40,6 +40,7 @@ import {
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { API_BASE } from '@/lib/api';
 
 const TIERS = {
   start: {
@@ -235,24 +236,30 @@ function OrderForm() {
       if (formData.telegram) form.append('telegram', formData.telegram);
       if (formData.image_file) form.append('image_file', formData.image_file);
 
-      const response = await fetch('https://api.upak.space/v2/payments/create', {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+      const response = await fetch(`${API_BASE}/payments/create-payment?subscription_type=${formData.package}`, {
         credentials: 'include',
         method: 'POST',
-        body: form
+        body: form,
+        signal: controller.signal
       });
+      window.clearTimeout(timeoutId);
 
       if (response.ok) {
         const result = await response.json();
         toast.success('Заказ создан успешно!');
-        if (result.payment_url) {
-          window.open(result.payment_url, '_blank');
+        const paymentUrl = result.payment_url || result.confirmation_url;
+        if (paymentUrl) {
+          window.open(paymentUrl, '_blank');
         }
         setIsOpen(false);
       } else {
         throw new Error('Ошибка при создании заказа');
       }
     } catch (error) {
-      toast.error('Произошла ошибка при создании заказа');
+      toast.error('API временно недоступен. Откроем Telegram для ручного оформления заказа.');
+      window.open(`https://t.me/SellEasyBot?start=site_order_${formData.package || 'start'}`, '_blank');
     } finally {
       setIsLoading(false);
     }

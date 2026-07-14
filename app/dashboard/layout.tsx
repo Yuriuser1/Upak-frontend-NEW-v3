@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }:{ children: React.ReactNode
         setOk(true);
         // Загружаем информацию о пользователе для проверки роли
         try {
-          const meData = await fetchAuthJSON<MeData>('/v2/me');
+          const meData = await fetchAuthJSON<MeData>('/me');
           setUserRole(meData.role || 'user');
         } catch (e) {
           console.error('Failed to load user role:', e);

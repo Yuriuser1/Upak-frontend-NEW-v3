@@ -48,7 +48,7 @@ export default function AdminUsersPage() {
       
       try {
         // Try to load users list - if successful, user has admin access
-        const usersData = await api<UserData[]>('/v2/admin/users');
+        const usersData = await api<UserData[]>('/admin/users');
         setUsers(usersData);
         setMe({ email: 'admin@upak.space', role: 'admin' }); // Mock data
       } catch (e: any) {
@@ -70,7 +70,7 @@ export default function AdminUsersPage() {
 
   async function handleUpdateRole(userId: number, role: 'user' | 'admin') {
     try {
-      await api(`/v2/admin/users/${userId}/role`, {
+      await api(`/admin/users/${userId}/role`, {
         method: 'PUT',
         json: { role }
       });
@@ -90,7 +90,7 @@ export default function AdminUsersPage() {
 
   async function handleToggleActive(userId: number, currentStatus: boolean) {
     try {
-      await api(`/v2/admin/users/${userId}`, {
+      await api(`/admin/users/${userId}`, {
         method: 'PUT',
         json: { is_active: !currentStatus }
       });
@@ -113,7 +113,7 @@ export default function AdminUsersPage() {
     }
 
     try {
-      await api(`/v2/admin/users/${userId}`, {
+      await api(`/admin/users/${userId}`, {
         method: 'DELETE'
       });
       

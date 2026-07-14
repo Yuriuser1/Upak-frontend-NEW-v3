@@ -12,8 +12,11 @@ export type ApiOptions = RequestInit & {
 };
 
 export async function api<T = any>(path: string, opts: ApiOptions = {}): Promise<T> {
-  // Ensure leading slash once, and prefix with API base
-  const url = `${API}${path.startsWith('/') ? '' : '/'}${path}`;
+  const normalizedPath = path.replace(/^\/+/, '');
+  const apiPath = API.endsWith('/v2') && normalizedPath.startsWith('v2/')
+    ? normalizedPath.slice(3)
+    : normalizedPath;
+  const url = `${API}/${apiPath}`;
 
   const headers = new Headers(opts.headers);
   let body: BodyInit | undefined;

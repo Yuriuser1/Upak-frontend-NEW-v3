@@ -47,7 +47,7 @@ function ResetPasswordForm() {
     setLoading(true);
 
     try {
-      await api('/v2/auth/reset-password', {
+      await api('/auth/reset-password', {
         method: 'POST',
         json: {
           token,
@@ -58,7 +58,7 @@ function ResetPasswordForm() {
       setSuccess(true);
     } catch (err: any) {
       if (err.message.includes('404')) {
-        setError('Функция сброса пароля временно недоступна. Обратитесь к администратору.');
+        setError('Сброс пароля временно недоступен. Напишите в Telegram @SellEasyBot, поможем вручную.');
       } else if (err.message.includes('Invalid') || err.message.includes('expired')) {
         setError('Токен недействителен или истек. Запросите новую ссылку для сброса пароля.');
       } else {

@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
   async function load() {
     try {
-      const data = await fetchAuthJSON<Me>('/v2/me');
+      const data = await fetchAuthJSON<Me>('/me');
       setMe(data);
     } catch (e: any) {
       setErr(e.message || 'Ошибка загрузки');

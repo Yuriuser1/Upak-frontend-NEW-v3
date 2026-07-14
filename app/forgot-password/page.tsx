@@ -32,9 +32,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // Note: Backend endpoint exists but returns 404
-      // This is ready for when backend is properly configured
-      await api('/v2/auth/forgot-password', {
+      await api('/auth/forgot-password', {
         method: 'POST',
         json: { email }
       });
@@ -42,7 +40,7 @@ export default function ForgotPasswordPage() {
       setSuccess(true);
     } catch (err: any) {
       if (err.message.includes('404')) {
-        setError('Функция восстановления пароля временно недоступна. Пожалуйста, обратитесь к администратору.');
+        setError('Восстановление пароля временно недоступно. Напишите в Telegram @SellEasyBot, поможем восстановить доступ вручную.');
       } else {
         setError('Ошибка при отправке запроса. Попробуйте позже.');
       }
