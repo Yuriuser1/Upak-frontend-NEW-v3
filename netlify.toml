@@ -19,7 +19,7 @@ status = 200
 
 [[redirects]]
 from = "/v2/*"
-to = "http://46.21.244.186/v2/:splat"
+to = "https://api.upak.space/v2/:splat"
 status = 200
 force = true
 
