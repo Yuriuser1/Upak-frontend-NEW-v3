@@ -10,9 +10,9 @@ const SITE_URL = 'https://www.upak.space';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'UPAK - Продающие карточки для маркетплейсов с помощью AI',
-  description: 'Создавайте профессиональные карточки товаров для Wildberries, Ozon и других маркетплейсов за минуты. AI-генерация контента, обработка изображений, готовые файлы для загрузки.',
-  keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, AI генерация, продажи',
+  title: 'UPAK - AI-карточки, фото-редактура и карточки под ключ для маркетплейсов',
+  description: 'UPAK готовит карточки товаров для Wildberries, Ozon и других маркетплейсов: SEO-описание, преимущества, характеристики, фото-задачи, ручная проверка и формат под ключ.',
+  keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, AI генерация, фото товара, инфографика, карточка под ключ',
   authors: [{ name: 'UPAK Team' }],
   icons: {
     icon: '/favicon.ico',
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: 'UPAK - Продающие карточки для маркетплейсов',
-    description: 'Один клик и твоя карточка готова!',
+    title: 'UPAK - карточки товаров, фото и визуал для маркетплейсов',
+    description: 'AI-структура карточки, фото-редактура, ТЗ для визуала и ручная проверка.',
     type: 'website',
     locale: 'ru_RU',
     url: SITE_URL,
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'UPAK - Продающие карточки для маркетплейсов',
-    description: 'Один клик и твоя карточка готова!',
+    title: 'UPAK - карточки товаров, фото и визуал для маркетплейсов',
+    description: 'AI-структура карточки, фото-редактура, ТЗ для визуала и ручная проверка.',
     images: [`${SITE_URL}/android-chrome-512x512.png`],
   },
 };

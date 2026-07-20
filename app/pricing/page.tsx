@@ -5,7 +5,7 @@ import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, CheckCircle, Crown, ShieldCheck, Star, ArrowRight } from 'lucide-react';
+import { Briefcase, Camera, CheckCircle, Crown, Palette, ShieldCheck, Star, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -73,6 +73,36 @@ const TIERS = [
     ],
   },
   {
+    name: 'Фото-редактура',
+    price: 'от 990₽',
+    priceNote: 'к карточке',
+    description: 'Загрузка фото товара, рекомендации по кадру, фону и инфографике.',
+    icon: Camera,
+    popular: false,
+    features: [
+      'Анализ фото товара',
+      'Рекомендации по первому экрану',
+      'Правки фона и света вручную',
+      'ТЗ для инфографики',
+      'Можно добавить к Start или Pro',
+    ],
+  },
+  {
+    name: 'Карточка под ключ',
+    price: 'от 1 990₽',
+    priceNote: 'AI + ручная работа',
+    description: 'Для товаров, где нужен текст, визуальная логика и ручная финальная проверка.',
+    icon: Palette,
+    popular: false,
+    features: [
+      'AI-структура карточки',
+      'Фото-редактура',
+      'ТЗ для визуала',
+      'Проверка специалистом',
+      '1 цикл правок',
+    ],
+  },
+  {
     name: 'Проверка специалистом',
     price: 'от 790₽',
     priceNote: 'ручная проверка',
@@ -105,11 +135,11 @@ export default function PricingPage() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">тариф</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Тарифы собраны под запуск продаж в РФ: бесплатный preview, низкий первый чек, пакет Pro и ручная проверка как допродажа.
+            Тарифы собраны под запуск продаж в РФ: бесплатный preview, низкий первый чек, пакет Pro, фото-редактура, карточки под ключ и ручная проверка.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mx-auto mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mx-auto mb-16">
           {TIERS.map((tier, index) => (
             <motion.div
               key={tier.name}
@@ -164,9 +194,9 @@ export default function PricingPage() {
           transition={{ delay: 0.5 }}
           className="text-center p-8 bg-muted rounded-xl max-w-3xl mx-auto"
         >
-          <h3 className="text-xl font-semibold mb-3">Нужен индивидуальный тариф?</h3>
+          <h3 className="text-xl font-semibold mb-3">Нужен индивидуальный тариф или карточки под ключ?</h3>
           <p className="text-muted-foreground mb-4">
-            Для объема больше 30 карточек, партнеров и ручной проверки напишите в Telegram. На старте не обещаем рост продаж или место в поиске, зато даем понятный результат и бесплатную переделку при технической ошибке.
+            Для объема больше 30 карточек, фото-редактуры, партнеров и ручной проверки напишите в Telegram. На старте не обещаем рост продаж или место в поиске, зато даем понятный результат и бесплатную переделку при технической ошибке.
           </p>
           <Button variant="outline" asChild>
             <Link href="/contact">Связаться с нами</Link>

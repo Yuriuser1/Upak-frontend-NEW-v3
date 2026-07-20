@@ -1,21 +1,9 @@
 [build]
 publish = "out"
-command = "bash ./build-static.sh"
+command = "npm run build"
 
 [build.environment]
 NODE_VERSION = "22"
-
-[[plugins]]
-package = "@netlify/plugin-nextjs"
-
-[functions]
-node_bundler = "nft"
-
-# Настройки для API routes
-[[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/__netlify-handler"
-status = 200
 
 [[redirects]]
 from = "/v2/*"

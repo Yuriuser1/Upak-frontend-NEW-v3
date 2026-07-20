@@ -31,10 +31,12 @@ export interface Order {
 export interface CreateOrderRequest {
   productName: string;
   productDescription: string;
-  marketplace: 'wb' | 'ozon';
+  marketplace: 'wb' | 'ozon' | 'yandex' | 'multi';
   price: number;
-  tariff: 'start' | 'pro';
+  tariff: 'start' | 'pro' | 'business30' | 'photo_edit' | 'turnkey1' | 'expert1' | 'expert10';
   productImages: string[];
+  photoTask?: string;
+  serviceMode?: string;
 }
 
 export interface BackendApiResponse<T> {
@@ -45,7 +47,7 @@ export interface BackendApiResponse<T> {
 }
 
 export interface TariffPlan {
-  id: 'start' | 'pro';
+  id: 'start' | 'pro' | 'business30' | 'photo_edit' | 'turnkey1' | 'expert1' | 'expert10';
   name: string;
   price: number;
   features: string[];

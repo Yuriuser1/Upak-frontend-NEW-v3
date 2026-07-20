@@ -12,7 +12,7 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Badge } from './ui/badge';
-import { Upload, X, Star, CheckCircle, Package, Zap } from 'lucide-react';
+import { Upload, X, Star, CheckCircle, Package, Zap, Camera, Wand2, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
@@ -45,6 +45,30 @@ const tariffPlans: TariffPlan[] = [
       'Единая структура для линейки товаров',
       'Удобно для регулярного обновления SKU'
     ]
+  },
+  {
+    id: 'photo_edit',
+    name: 'Фото-редактура',
+    price: 990,
+    features: [
+      'Анализ загруженных фото товара',
+      'Рекомендации по фону, свету и кадру',
+      'ТЗ для инфографики',
+      'Можно добавить к Start или Pro',
+      'Ручное оформление через Telegram при сложной задаче'
+    ]
+  },
+  {
+    id: 'turnkey1',
+    name: 'Под ключ',
+    price: 1990,
+    features: [
+      'AI-структура карточки',
+      'Фото-редактура или ТЗ для визуала',
+      'SEO-описание и преимущества',
+      'Проверка специалистом',
+      '1 цикл правок'
+    ]
   }
 ];
 
@@ -58,12 +82,13 @@ export function OrderForm() {
     productDescription: '',
     marketplace: '',
     price: '',
-    tariff: 'start'
+    tariff: 'start',
+    photoTask: ''
   });
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const maxFiles = formData.tariff === 'pro' ? 10 : 3;
+    const maxFiles = formData.tariff === 'pro' || formData.tariff === 'turnkey1' ? 10 : 3;
     
     if (files.length > maxFiles) {
       toast.error(`Максимум ${maxFiles} изображений для тарифа ${formData.tariff}`);
@@ -129,8 +154,10 @@ export function OrderForm() {
         productDescription: formData.productDescription,
         marketplace: formData.marketplace as 'wb' | 'ozon',
         price: parseFloat(formData.price),
-        tariff: formData.tariff as 'start' | 'pro',
+        tariff: formData.tariff as CreateOrderRequest['tariff'],
         productImages: imageUrls,
+        photoTask: formData.photoTask,
+        serviceMode: formData.tariff,
       };
 
       const response = await fetch('/api/orders', {
@@ -280,6 +307,17 @@ export function OrderForm() {
                   </RadioGroup>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="photoTask">Задача по фото или визуалу</Label>
+                  <Textarea
+                    id="photoTask"
+                    value={formData.photoTask}
+                    onChange={(e) => setFormData(prev => ({ ...prev, photoTask: e.target.value }))}
+                    placeholder="Например: убрать фон, подсказать кадр первого фото, подготовить идею инфографики, собрать карточку под ключ..."
+                    rows={3}
+                  />
+                </div>
+
                 {/* Загрузка изображений */}
                 <div className="space-y-4">
                   <Label>Изображения товара</Label>
@@ -287,7 +325,7 @@ export function OrderForm() {
                     <div className="text-center">
                       <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-sm text-muted-foreground mb-2">
-                        Загрузите до {formData.tariff === 'pro' ? '10' : '3'} изображений (макс. 10 МБ каждое)
+                        Загрузите до {formData.tariff === 'pro' || formData.tariff === 'turnkey1' ? '10' : '3'} изображений (макс. 10 МБ каждое)
                       </p>
                       <Input
                         type="file"
@@ -388,7 +426,7 @@ export function OrderForm() {
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Изображения:</p>
                   <p className="text-sm text-muted-foreground">
-                    {selectedFiles.length} из {formData.tariff === 'pro' ? 10 : 3}
+                    {selectedFiles.length} из {formData.tariff === 'pro' || formData.tariff === 'turnkey1' ? 10 : 3}
                   </p>
                 </div>
               )}

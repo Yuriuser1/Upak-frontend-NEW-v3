@@ -4,11 +4,8 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
-  distDir: 'out',
   images: {
-    unoptimized: true,
-    loader: 'custom',
-    loaderFile: './lib/image-loader.js'
+    unoptimized: true
   },
   experimental: {
     esmExternals: false
