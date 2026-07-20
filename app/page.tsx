@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Image from 'next/image';
 import { 
   Package, 
   Zap, 
@@ -182,7 +181,7 @@ const processes = [
 const examples = [
   {
     name: 'Умные часы Apple Watch Series 9',
-    image: 'https://www.apple.com/newsroom/images/2023/09/apple-introduces-the-advanced-new-apple-watch-series-9/article/Apple-Watch-S9-graphite-stainless-steel-FineWoven-Magenetic-Link-green-230912_inline.jpg.large_2x.jpg',
+    image: '/product-jacket.jpg',
     category: 'Электроника',
     rating: 4.8,
     reviews: 1247,
@@ -192,7 +191,7 @@ const examples = [
   },
   {
     name: 'Кроссовки Nike Air Max 270',
-    image: 'https://d2ob0iztsaxy5v.cloudfront.net/product/340919/3409193160m7_zm.jpg',
+    image: '/product-jacket.jpg',
     category: 'Спорт и отдых',
     rating: 4.7,
     reviews: 892,
@@ -202,7 +201,7 @@ const examples = [
   },
   {
     name: 'Смартфон Samsung Galaxy S24',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Samsung_Galaxy_S24%2C_Sperrbildschirm.JPG',
+    image: '/product-jacket.jpg',
     category: 'Электроника',
     rating: 4.9,
     reviews: 1543,
@@ -216,19 +215,19 @@ const testimonials = [
   {
     name: 'Анна Козлова',
     role: 'Основатель магазина детской одежды',
-    image: 'https://i.pinimg.com/originals/f9/f4/a9/f9f4a9ab04a9e13aaac330a0e4d2c438.jpg',
+    image: '',
     quote: 'UPAK помог быстро собрать понятную структуру карточек и подготовить задания для визуала. На старте это сильно экономит время.'
   },
   {
     name: 'Максим Петров',
     role: 'Селлер электроники',
-    image: 'https://i.pinimg.com/originals/21/76/78/217678f7eb0ebcae251430dda3529ff0.jpg',
+    image: '',
     quote: 'Раньше на черновик карточки уходили часы. Теперь можно быстро получить основу и решить, нужна ли ручная доработка.'
   },
   {
     name: 'Елена Смирнова',
     role: 'Владелица бренда косметики',
-    image: 'https://i.pinimg.com/originals/9e/c4/a7/9ec4a7d81442d0183cf332ce959dc310.jpg',
+    image: '',
     quote: 'Пакетный формат удобен для линейки товаров: структура единая, правки понятные, фото-задачи не теряются.'
   }
 ];
@@ -427,15 +426,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="upak-landing min-h-screen bg-gray-900 text-white">
       {/* Header */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-sm' : 'bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="relative w-8 h-8">
-                <Image alt="UPAK Logo" fill className="object-contain" src="/upak_logo.png" />
-              </div>
+              <img alt="UPAK Logo" className="h-8 w-8 object-contain" src="/upak_logo.png" />
               <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 UPAK
               </span>
@@ -803,10 +800,9 @@ export default function HomePage() {
                   viewport={{ once: true }}
                 >
                   <div className="relative aspect-square bg-gray-700">
-                    <Image
+                    <img
                       alt={example.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                       src={example.image}
                     />
                     <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1 text-sm text-white">
@@ -897,13 +893,8 @@ export default function HomePage() {
                   viewport={{ once: true }}
                 >
                   <div className="flex items-center mb-4">
-                    <div className="relative w-12 h-12 mr-4">
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover rounded-full"
-                      />
+                    <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">
+                      {testimonial.name.slice(0, 1)}
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">{testimonial.name}</h4>
@@ -978,9 +969,7 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="flex items-center space-x-3 mb-4 md:mb-0">
-                <div className="relative w-8 h-8">
-                  <Image alt="UPAK Logo" fill className="object-contain" src="/upak_logo.png" />
-                </div>
+                <img alt="UPAK Logo" className="h-8 w-8 object-contain" src="/upak_logo.png" />
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   UPAK
                 </span>
