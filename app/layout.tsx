@@ -43,9 +43,9 @@ const criticalFallbackCss = `
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'UPAK - AI-карточки, фото-редактура и карточки под ключ для маркетплейсов',
-  description: 'UPAK готовит карточки товаров для Wildberries, Ozon и других маркетплейсов: SEO-описание, преимущества, характеристики, фото-задачи, ручная проверка и формат под ключ.',
-  keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, AI генерация, фото товара, инфографика, карточка под ключ',
+  title: 'UPAK - пилот для пакетной подготовки карточек WB/Ozon',
+  description: 'UPAK помогает менеджерам маркетплейсов готовить структурированные комплекты карточек: поля, SEO-описание, контроль фактов, визуальное ТЗ и экспорт для SKU.',
+  keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, менеджер маркетплейсов, SKU, визуальное ТЗ, инфографика',
   authors: [{ name: 'UPAK Team' }],
   icons: {
     icon: '/favicon.ico',
@@ -57,8 +57,8 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: 'UPAK - карточки товаров, фото и визуал для маркетплейсов',
-    description: 'AI-структура карточки, фото-редактура, ТЗ для визуала и ручная проверка.',
+    title: 'UPAK - пилот для карточек товаров WB/Ozon',
+    description: 'Структура карточки, контроль фактов, визуальное ТЗ и пакетная работа с SKU.',
     type: 'website',
     locale: 'ru_RU',
     url: SITE_URL,
@@ -74,8 +74,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'UPAK - карточки товаров, фото и визуал для маркетплейсов',
-    description: 'AI-структура карточки, фото-редактура, ТЗ для визуала и ручная проверка.',
+    title: 'UPAK - пилот для карточек товаров WB/Ozon',
+    description: 'Структура карточки, контроль фактов, визуальное ТЗ и пакетная работа с SKU.',
     images: [`${SITE_URL}/android-chrome-512x512.png`],
   },
 };

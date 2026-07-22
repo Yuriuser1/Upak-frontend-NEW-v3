@@ -3,39 +3,39 @@
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, Target, Users, Zap, Shield, Clock } from 'lucide-react';
+import { Bot, Clock, FileSpreadsheet, SearchCheck, Shield, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const values = [
   {
+    icon: SearchCheck,
+    title: 'Проверяем факты',
+    description: 'Не выдумываем свойства товара. Спорные формулировки выносим отдельно, чтобы менеджер мог их проверить.',
+  },
+  {
+    icon: FileSpreadsheet,
+    title: 'Думаем пакетами',
+    description: 'UPAK полезнее не как генератор одного текста, а как помощник для 10-30 SKU с единым шаблоном и экспортом.',
+  },
+  {
     icon: Bot,
-    title: 'Практичный AI',
-    description: 'Нейросеть помогает быстро собрать черновик карточки под требования российских маркетплейсов.',
-  },
-  {
-    icon: Zap,
-    title: 'Скорость',
-    description: 'Карточка товара готова за 5 минут. Минимум ручной работы — максимум автоматизации.',
-  },
-  {
-    icon: Target,
-    title: 'Структура',
-    description: 'Название, SEO-описание, преимущества, характеристики и рекомендации для визуала в одном результате.',
+    title: 'AI ускоряет работу',
+    description: 'Нейросеть собирает черновик, а человек контролирует качество, структуру и рисковые обещания.',
   },
   {
     icon: Shield,
-    title: 'Честные обещания',
-    description: 'Мы не гарантируем топ в поиске, зато бесплатно переделаем результат при технической ошибке.',
+    title: 'Без гарантий топа',
+    description: 'Мы не обещаем рост продаж или место в поиске. Карточка влияет на качество подачи, но продажи зависят от множества факторов.',
   },
   {
     icon: Users,
-    title: 'Для всех',
-    description: 'Подходит как начинающим селлерам, так и опытным продавцам с большими объёмами.',
+    title: 'Для менеджеров',
+    description: 'Главная аудитория пилота: менеджеры маркетплейсов, агентства, фотостудии и поставщики с ассортиментом.',
   },
   {
     icon: Clock,
-    title: 'Живой запуск',
-    description: 'На старте проекта принимаем вопросы через Telegram и email, быстро дорабатывая продукт по реальным заявкам.',
+    title: 'Пилотный режим',
+    description: 'Сейчас мы проверяем спрос, качество результата и повторные заказы до масштабной рекламы и развития кабинета.',
   },
 ];
 
@@ -48,14 +48,15 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="mb-6 text-4xl font-bold md:text-5xl">
             <span>О проекте </span>
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">UPAK</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Мы создаём инструменты, которые помогают селлерам на маркетплейсах быстро и профессионально оформлять карточки товаров с помощью искусственного интеллекта.
+          <p className="mx-auto max-w-3xl text-xl text-muted-foreground">
+            UPAK — пилотный сервис для подготовки комплектов карточек товаров: текстовые поля, визуальное ТЗ,
+            контроль фактов и экспорт для менеджеров маркетплейсов.
           </p>
         </motion.div>
 
@@ -63,28 +64,26 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="max-w-4xl mx-auto mb-16"
+          className="mx-auto mb-16 max-w-4xl"
         >
           <Card>
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold mb-4">Наша миссия</h2>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                В условиях жесткой конкуренции на маркетплейсах селлеру важно быстро готовить понятный
-                контент: название, описание, преимущества, характеристики и ТЗ для визуала. Карточка не
-                гарантирует продажи сама по себе, но экономит время и помогает не начинать работу с пустого листа.
+              <h2 className="mb-4 text-2xl font-bold">Почему мы меняем фокус</h2>
+              <p className="mb-4 leading-relaxed text-muted-foreground">
+                Простая генерация названий и описаний быстро становится бесплатной функцией маркетплейсов и универсальных
+                нейросетей. Поэтому UPAK не должен быть еще одним “AI-текстом за пять минут”.
               </p>
-              <p className="text-muted-foreground leading-relaxed">
-                UPAK фокусируется на практичной упаковке товара под Wildberries, Ozon и Яндекс Маркет:
-                бесплатный preview, платные карточки Start/Pro, пакет Business 30 и ручная проверка
-                специалистом для тех случаев, где нужен дополнительный взгляд.
+              <p className="leading-relaxed text-muted-foreground">
+                Наш фокус — пакетная работа для менеджеров: собрать структуру карточки, проверить факты, подготовить
+                визуальное задание и передать результат в удобном формате для дальнейшей работы с WB/Ozon/Яндекс Маркетом.
               </p>
             </CardContent>
           </Card>
         </motion.div>
 
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Наши ценности</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="mb-12 text-center text-3xl font-bold">Принципы пилота</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {values.map((item, index) => (
               <motion.div
                 key={item.title}
@@ -92,13 +91,13 @@ export default function AboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-lg transition-shadow">
+                <Card className="h-full transition-shadow hover:shadow-lg">
                   <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                      <item.icon className="w-6 h-6 text-white" />
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
+                      <item.icon className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground text-sm">{item.description}</p>
+                    <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -110,12 +109,12 @@ export default function AboutPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center p-8 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl max-w-3xl mx-auto"
+          className="mx-auto max-w-3xl rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-8 text-center"
         >
-          <h3 className="text-xl font-semibold mb-3">Платформы</h3>
+          <h3 className="mb-3 text-xl font-semibold">Текущий статус</h3>
           <p className="text-muted-foreground">
-            Мы поддерживаем создание карточек для <strong>Wildberries</strong>, <strong>Ozon</strong> и <strong>Яндекс.Маркет</strong>.
-            Файлы помогают подготовить карточку к загрузке и ускоряют работу менеджера или владельца магазина.
+            Проект можно показывать как пилотную витрину и собирать первые целевые заявки. Массовые продажи,
+            личный кабинет и автоматическая выдача результата будут развиваться только после подтверждения повторных заказов.
           </p>
         </motion.div>
       </main>

@@ -1,180 +1,39 @@
-
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { fetchAuthJSON } from '@/lib/api';
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { CheckCircle, MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-type PaymentStatus = {
-  status: 'succeeded' | 'pending' | 'canceled';
-  subscription_type: string | null;
-  subscription_expires: string | null;
-  cards_limit: number | null;
-};
+const TELEGRAM_URL = 'https://t.me/SellEasyBot';
 
 function PaymentSuccessContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(true);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    checkPaymentStatus();
-  }, []);
-
-  async function checkPaymentStatus() {
-    try {
-      setLoading(true);
-      const paymentId = searchParams.get('payment_id');
-      const orderId = searchParams.get('order_id');
-      
-      if (!paymentId && !orderId) {
-        setError('Отсутствует ID платежа или заказа');
-        return;
-      }
-
-      // Проверяем статус платежа на бэкенде
-      const status = await fetchAuthJSON<PaymentStatus>(
-        `/payments/status?${paymentId ? `payment_id=${paymentId}` : `order_id=${orderId}`}`
-      );
-      
-      setPaymentStatus(status);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка проверки статуса платежа');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-700">Проверяем статус платежа...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-orange-50 p-6">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Ошибка</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="w-full px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
-          >
-            Вернуться на дашборд
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (paymentStatus?.status === 'succeeded') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Оплата успешна!</h1>
-          <p className="text-gray-600 mb-6">Ваша подписка активирована</p>
-          
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-6">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Тариф:</span>
-                <span className="font-semibold text-gray-800">
-                  {(paymentStatus.subscription_type || 'FREE').toUpperCase()}
-                </span>
-              </div>
-              
-              {paymentStatus.subscription_expires && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Действует до:</span>
-                  <span className="font-semibold text-gray-800">
-                    {new Date(paymentStatus.subscription_expires).toLocaleDateString('ru-RU', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </span>
-                </div>
-              )}
-              
-              {paymentStatus.cards_limit && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Доступно карточек:</span>
-                  <span className="font-semibold text-gray-800">
-                    {paymentStatus.cards_limit}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="space-y-3">
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="w-full px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors font-medium"
-            >
-              Перейти в личный кабинет
-            </button>
-            
-            <button
-              onClick={() => router.push('/generate')}
-              className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-            >
-              Создать карточку
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Статус pending или другой
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 via-white to-orange-50 p-6">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-        <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+          <CheckCircle className="h-8 w-8 text-green-600" />
         </div>
-        
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Платеж обрабатывается</h1>
-        <p className="text-gray-600 mb-6">
-          Ваш платеж находится в обработке. Это может занять несколько минут.
+
+        <h1 className="mb-2 text-3xl font-bold text-gray-800">Оплата получена</h1>
+        <p className="mb-6 text-gray-600">
+          Спасибо. UPAK работает в пилотном режиме, поэтому следующий шаг — ручная сверка задачи и выдача результата через согласованный канал.
         </p>
-        
+
+        <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+          Напишите в Telegram, если хотите ускорить сверку заказа или передать дополнительные данные по SKU.
+        </div>
+
         <div className="space-y-3">
-          <button
-            onClick={checkPaymentStatus}
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Проверить статус снова
-          </button>
-          
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="w-full px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-          >
-            Вернуться на дашборд
-          </button>
+          <Button asChild className="w-full bg-blue-600 hover:bg-blue-500">
+            <a href={TELEGRAM_URL} target="_blank" rel="noreferrer">
+              Написать в Telegram
+              <MessageCircle className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/">Вернуться на сайт</Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -183,14 +42,7 @@ function PaymentSuccessContent() {
 
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-700">Загрузка...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Загрузка...</div>}>
       <PaymentSuccessContent />
     </Suspense>
   );

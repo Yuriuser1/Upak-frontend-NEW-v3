@@ -40,7 +40,7 @@ export default function ContactPage() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">с нами</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Мы всегда на связи и готовы помочь. Выберите удобный способ связи.
+            Для пилотной заявки лучше написать в Telegram и сразу прислать 1-3 товара, площадку и задачу по карточке.
           </p>
         </motion.div>
 
@@ -82,6 +82,22 @@ export default function ContactPage() {
             Telegram — быстрые ответы по мере запуска проекта<br />
             Email-запросы — <strong>Пн-Пт, 9:00-18:00 (МСК)</strong>
           </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 max-w-3xl mx-auto rounded-xl border bg-white p-8"
+        >
+          <h3 className="text-xl font-semibold mb-4">Что прислать для preview</h3>
+          <ul className="space-y-2 text-muted-foreground">
+            <li>1. Название или короткое описание товара.</li>
+            <li>2. Площадку: Wildberries, Ozon, Яндекс Маркет или мультиплощадка.</li>
+            <li>3. Факты, которые нельзя выдумывать: материал, размеры, состав, ограничения.</li>
+            <li>4. Фото товара, если нужна визуальная задача или карточка под ключ.</li>
+            <li>5. Контакт для связи и желаемый формат результата.</li>
+          </ul>
         </motion.div>
       </main>
       <Footer />

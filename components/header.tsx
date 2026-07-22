@@ -33,6 +33,9 @@ export function Header() {
           <Link href="/pricing" className="text-sm font-medium transition-colors hover:text-blue-600">
             Тарифы
           </Link>
+          <Link href="/brief" className="text-sm font-medium transition-colors hover:text-blue-600">
+            Бриф
+          </Link>
           <Link href="/contact" className="text-sm font-medium transition-colors hover:text-blue-600">
             Контакты
           </Link>
