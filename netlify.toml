@@ -11,6 +11,42 @@ to = "https://api.upak.space/v2/:splat"
 status = 200
 force = true
 
+[[redirects]]
+from = "/login"
+to = "/#pilot"
+status = 302
+force = true
+
+[[redirects]]
+from = "/register"
+to = "/#pilot"
+status = 302
+force = true
+
+[[redirects]]
+from = "/forgot-password"
+to = "/#pilot"
+status = 302
+force = true
+
+[[redirects]]
+from = "/reset-password"
+to = "/#pilot"
+status = 302
+force = true
+
+[[redirects]]
+from = "/profile"
+to = "/#pilot"
+status = 302
+force = true
+
+[[redirects]]
+from = "/dashboard/*"
+to = "/#pilot"
+status = 302
+force = true
+
 # Настройки для SSG
 [[headers]]
 for = "/*"

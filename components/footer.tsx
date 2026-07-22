@@ -39,6 +39,12 @@ export function Footer() {
               <Link href="/about" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
                 О проекте
               </Link>
+              <Link href="/pilot-terms" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
+                Условия пилота
+              </Link>
+              <Link href="/privacy" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
+                Обработка данных
+              </Link>
             </div>
           </div>
 

@@ -19,6 +19,7 @@ import {
   Target,
   Users,
 } from 'lucide-react';
+import Link from 'next/link';
 
 import { API_BASE } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
@@ -112,6 +113,7 @@ function PreviewForm() {
     email: '',
     telegram: '',
   });
+  const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [preview, setPreview] = useState<null | {
     title?: string;
@@ -124,6 +126,10 @@ function PreviewForm() {
     event.preventDefault();
     if (!formData.product || !formData.telegram) {
       toast.error('Опишите товар и укажите Telegram для связи');
+      return;
+    }
+    if (!consent) {
+      toast.error('Нужно согласие на обработку данных для preview');
       return;
     }
 
@@ -190,6 +196,21 @@ function PreviewForm() {
             value={formData.telegram}
             onChange={(event) => setFormData({ ...formData, telegram: event.target.value })}
           />
+          <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-left text-xs leading-5 text-slate-600">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(event) => setConsent(event.target.checked)}
+              className="mt-1"
+            />
+            <span>
+              Согласен на обработку данных для подготовки preview и связи по заявке. Подробнее: {' '}
+              <Link href="/privacy" className="font-medium text-blue-700 underline">
+                политика обработки данных
+              </Link>
+              .
+            </span>
+          </label>
           <Button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-500">
             {isLoading ? 'Готовим preview...' : 'Получить preview'}
             <ArrowRight className="ml-2 h-4 w-4" />
