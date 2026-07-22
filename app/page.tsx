@@ -424,6 +424,12 @@ export default function HomePage() {
                   Получить preview
                 </Button>
               </a>
+              <Button asChild size="lg" variant="outline" className="w-full border-white/30 bg-transparent text-white hover:bg-white hover:text-gray-900 sm:w-auto">
+                <Link href="/brief">Бриф пилота</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="w-full border-white/30 bg-transparent text-white hover:bg-white hover:text-gray-900 sm:w-auto">
+                <Link href="/pilot-plan">План 21 дня</Link>
+              </Button>
               <Button size="lg" variant="outline" onClick={openPilotTelegram} className="w-full border-white/30 bg-transparent text-white hover:bg-white hover:text-gray-900 sm:w-auto">
                 Написать в Telegram
               </Button>

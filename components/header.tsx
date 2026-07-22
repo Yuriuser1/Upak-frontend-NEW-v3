@@ -36,6 +36,9 @@ export function Header() {
           <Link href="/brief" className="text-sm font-medium transition-colors hover:text-blue-600">
             Бриф
           </Link>
+          <Link href="/pilot-plan" className="text-sm font-medium transition-colors hover:text-blue-600">
+            План
+          </Link>
           <Link href="/contact" className="text-sm font-medium transition-colors hover:text-blue-600">
             Контакты
           </Link>
