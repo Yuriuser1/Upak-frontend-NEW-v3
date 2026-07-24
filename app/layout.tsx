@@ -43,9 +43,9 @@ const criticalFallbackCss = `
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'UPAK - пилот для пакетной подготовки карточек WB/Ozon',
-  description: 'UPAK помогает менеджерам маркетплейсов готовить структурированные комплекты карточек: поля, SEO-описание, контроль фактов, визуальное ТЗ и экспорт для SKU.',
-  keywords: 'карточки товаров, маркетплейсы, Wildberries, Ozon, менеджер маркетплейсов, SKU, визуальное ТЗ, инфографика',
+  title: 'UPAK - карточки товаров под ключ для WB/Ozon',
+  description: 'UPAK помогает подготовить карточку товара под ключ: фото, SEO-описание, преимущества, характеристики, визуальная логика, PDF, ZIP и XLSX/CSV для работы с маркетплейсом.',
+  keywords: 'карточки товаров под ключ, маркетплейсы, Wildberries, Ozon, фото товара, инфографика, SEO описание, XLSX карточки товара',
   authors: [{ name: 'UPAK Team' }],
   icons: {
     icon: '/favicon.ico',
@@ -57,8 +57,8 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: 'UPAK - пилот для карточек товаров WB/Ozon',
-    description: 'Структура карточки, контроль фактов, визуальное ТЗ и пакетная работа с SKU.',
+    title: 'UPAK - карточки товаров под ключ для WB/Ozon',
+    description: 'Фото, текст, структура карточки, визуальная логика и файлы для работы с маркетплейсом.',
     type: 'website',
     locale: 'ru_RU',
     url: SITE_URL,
@@ -74,8 +74,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'UPAK - пилот для карточек товаров WB/Ozon',
-    description: 'Структура карточки, контроль фактов, визуальное ТЗ и пакетная работа с SKU.',
+    title: 'UPAK - карточки товаров под ключ для WB/Ozon',
+    description: 'Фото, текст, структура карточки, визуальная логика и файлы для работы с маркетплейсом.',
     images: [`${SITE_URL}/android-chrome-512x512.png`],
   },
 };

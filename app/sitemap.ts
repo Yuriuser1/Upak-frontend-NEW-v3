@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 const SITE_URL = 'https://www.upak.space';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ['', '/about', '/brief', '/contact', '/faq', '/pilot-plan', '/pilot-terms', '/pricing', '/privacy'];
+  const routes = ['', '/about', '/brief', '/contact', '/faq', '/pilot-plan', '/pilot-terms', '/pricing', '/privacy', '/turnkey'];
 
   return routes.map((route) => ({
     url: `${SITE_URL}${route}`,

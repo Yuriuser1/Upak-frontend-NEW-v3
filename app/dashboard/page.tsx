@@ -20,11 +20,11 @@ type Me = {
 };
 
 const packageOptions = [
-  { value: 'start', label: 'Start - 349 руб.', hint: '1 AI-карточка' },
-  { value: 'pro', label: 'Pro 10 - 2 490 руб.', hint: '10 карточек' },
-  { value: 'business30', label: 'Business 30 - 5 990 руб.', hint: '30 карточек' },
+  { value: 'start', label: 'AI-основа - 490-790 руб.', hint: 'текст, структура, краткое ТЗ' },
+  { value: 'turnkey1', label: 'Под ключ Start - 1 990-2 990 руб.', hint: '1 карточка: фото, текст, файлы, проверка' },
+  { value: 'turnkey10', label: 'Под ключ Pro 10 - 14 900-24 900 руб.', hint: '10 карточек в едином стиле' },
+  { value: 'business30', label: 'Manager 30 - по расчету', hint: '30 SKU для менеджеров и поставщиков' },
   { value: 'photo_edit', label: 'Фото-редактура - от 990 руб.', hint: 'фото, фон, свет, ТЗ' },
-  { value: 'turnkey1', label: 'Карточка под ключ - от 1 990 руб.', hint: 'AI + фото + ручная проверка' },
   { value: 'expert1', label: 'Проверка специалистом - 790 руб.', hint: 'ручная проверка 1 карточки' },
 ];
 
@@ -39,7 +39,7 @@ export default function DashboardPage() {
     email: '',
     telegram: '',
     photoTask: '',
-    imageFile: null as File | null,
+    imageFiles: [] as File[],
   });
 
   async function load() {
@@ -57,11 +57,16 @@ export default function DashboardPage() {
 
   async function buy(pkg: string) {
     setErr(null);
+    if (!formData.email) {
+      toast.error('Укажите email для чека');
+      return;
+    }
     try {
       const res = await fetch(`${API_BASE}/payments/create-payment?subscription_type=${pkg}`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, telegram: formData.telegram }),
       });
       if (!res.ok) throw new Error(await res.text());
       const j = await res.json();
@@ -83,26 +88,55 @@ export default function DashboardPage() {
     setErr(null);
 
     try {
-      const form = new FormData();
-      form.append('package', formData.package);
-      form.append('prompt', formData.product);
-      form.append('marketplace', formData.marketplace);
-      form.append('email', formData.email);
-      form.append('service_mode', formData.package);
-      if (formData.telegram) form.append('telegram', formData.telegram);
-      if (formData.photoTask) form.append('photo_task', formData.photoTask);
-      if (formData.imageFile) form.append('image_file', formData.imageFile);
+      const orderRes = await fetch(`${API_BASE}/orders`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          package: formData.package,
+          product_name: formData.product.slice(0, 140),
+          product_description: [formData.product, formData.photoTask ? `Задача по фото: ${formData.photoTask}` : '']
+            .filter(Boolean)
+            .join('\n\n'),
+          marketplace: formData.marketplace,
+          email: formData.email,
+          telegram: formData.telegram,
+        }),
+      });
+
+      if (!orderRes.ok) throw new Error(await orderRes.text());
+      const order = await orderRes.json();
+      const orderId = order.order_id;
+
+      for (const [index, file] of formData.imageFiles.slice(0, 10).entries()) {
+        const assetForm = new FormData();
+        assetForm.append('file', file);
+        assetForm.append('role', index === 0 ? 'main_photo' : 'product_photo');
+
+        const assetRes = await fetch(`${API_BASE}/orders/${orderId}/assets`, {
+          method: 'POST',
+          credentials: 'include',
+          body: assetForm,
+        });
+
+        if (!assetRes.ok) throw new Error(await assetRes.text());
+      }
 
       const res = await fetch(`${API_BASE}/payments/create-payment?subscription_type=${formData.package}`, {
         method: 'POST',
         credentials: 'include',
-        body: form,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: orderId,
+          email: formData.email,
+          telegram: formData.telegram,
+        }),
       });
 
       if (!res.ok) throw new Error(await res.text());
       const j = await res.json();
       const paymentUrl = j.confirmation_url || j.payment_url;
-      toast.success('Заказ подготовлен. Открываем оплату.');
+      toast.success('Заказ и фото приняты. Открываем оплату.');
       if (paymentUrl) window.location.href = paymentUrl;
     } catch (e: any) {
       const message = e.message || 'Не удалось создать заказ';
@@ -119,7 +153,7 @@ export default function DashboardPage() {
         <Badge className="mb-4 bg-white text-slate-950 hover:bg-white">UPAK кабинет</Badge>
         <h1 className="text-3xl font-black leading-tight sm:text-5xl">Рабочее место для карточек, фото и оплат</h1>
         <p className="mt-4 max-w-3xl text-white/95">
-          Создавайте AI-карточки, загружайте фото товара, оформляйте фото-редактуру или карточку под ключ и отслеживайте доступные слоты.
+          Создавайте заказы под ключ: загружайте фото товара, фиксируйте факты, запускайте оплату и получайте готовые файлы.
         </p>
       </div>
 
@@ -145,8 +179,8 @@ export default function DashboardPage() {
           <CreditCard className="mb-3 h-7 w-7 text-orange-600" />
           <div className="text-sm font-medium text-slate-500">Быстрая покупка</div>
           <div className="mt-3 flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => buy('start')}>Start</Button>
-            <Button size="sm" className="bg-slate-950 hover:bg-slate-800" onClick={() => buy('pro')}>Pro</Button>
+            <Button size="sm" variant="outline" onClick={() => buy('start')}>AI</Button>
+            <Button size="sm" className="bg-slate-950 hover:bg-slate-800" onClick={() => buy('turnkey1')}>Под ключ</Button>
           </div>
         </div>
       </div>
@@ -210,8 +244,12 @@ export default function DashboardPage() {
                 <Input
                   type="file"
                   accept="image/*"
-                  onChange={(event) => setFormData({ ...formData, imageFile: event.target.files?.[0] || null })}
+                  multiple
+                  onChange={(event) => setFormData({ ...formData, imageFiles: Array.from(event.target.files || []).slice(0, 10) })}
                 />
+                <p className="mt-1 text-xs text-slate-500">
+                  До 10 фото: главный кадр, детали, упаковка, состав, размеры.
+                </p>
               </div>
               <div>
                 <Label>Telegram</Label>
@@ -255,7 +293,7 @@ export default function DashboardPage() {
             <ImageUp className="mb-4 h-8 w-8 text-cyan-300" />
             <h2 className="text-xl font-black">Что входит в “под ключ”</h2>
             <ul className="mt-4 space-y-3 text-sm text-slate-200">
-              {['AI-структура карточки', 'Фото-редактура или ТЗ на визуал', 'SEO-описание и преимущества', 'Проверка специалистом', '1 цикл правок'].map((item) => (
+              {['Прием фото и фактов', 'AI-структура карточки', 'Фото-улучшение или ТЗ на визуал', 'PDF + ZIP + CSV/XLSX', 'Ручная проверка и 1 цикл правок'].map((item) => (
                 <li key={item} className="flex gap-2">
                   <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
                   {item}

@@ -3,7 +3,7 @@
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, Clock, FileSpreadsheet, SearchCheck, Shield, Users } from 'lucide-react';
+import { Bot, Camera, FileArchive, FileSpreadsheet, SearchCheck, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const values = [
@@ -14,8 +14,13 @@ const values = [
   },
   {
     icon: FileSpreadsheet,
-    title: 'Думаем пакетами',
-    description: 'UPAK полезнее не как генератор одного текста, а как помощник для 10-30 SKU с единым шаблоном и экспортом.',
+    title: 'Выдаем файлы',
+    description: 'Финальный результат должен быть не перепиской, а комплектом: PDF, таблица, архив фото и структура карточки.',
+  },
+  {
+    icon: Camera,
+    title: 'Работаем с фото',
+    description: 'Принимаем исходные изображения, улучшаем подачу и формируем визуальную логику карточки без искажения товара.',
   },
   {
     icon: Bot,
@@ -28,14 +33,9 @@ const values = [
     description: 'Мы не обещаем рост продаж или место в поиске. Карточка влияет на качество подачи, но продажи зависят от множества факторов.',
   },
   {
-    icon: Users,
-    title: 'Для менеджеров',
-    description: 'Главная аудитория пилота: менеджеры маркетплейсов, агентства, фотостудии и поставщики с ассортиментом.',
-  },
-  {
-    icon: Clock,
-    title: 'Пилотный режим',
-    description: 'Сейчас мы проверяем спрос, качество результата и повторные заказы до масштабной рекламы и развития кабинета.',
+    icon: FileArchive,
+    title: 'Под ключ',
+    description: 'Основная ценность UPAK - снять с клиента путь от фото и фактов до готового комплекта для WB/Ozon.',
   },
 ];
 
@@ -55,7 +55,7 @@ export default function AboutPage() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">UPAK</span>
           </h1>
           <p className="mx-auto max-w-3xl text-xl text-muted-foreground">
-            UPAK — пилотный сервис для подготовки комплектов карточек товаров: текстовые поля, визуальное ТЗ,
+            UPAK — сервис подготовки карточек товаров под ключ: фото, текстовые поля, визуальная логика,
             контроль фактов и экспорт для менеджеров маркетплейсов.
           </p>
         </motion.div>
@@ -74,15 +74,15 @@ export default function AboutPage() {
                 нейросетей. Поэтому UPAK не должен быть еще одним “AI-текстом за пять минут”.
               </p>
               <p className="leading-relaxed text-muted-foreground">
-                Наш фокус — пакетная работа для менеджеров: собрать структуру карточки, проверить факты, подготовить
-                визуальное задание и передать результат в удобном формате для дальнейшей работы с WB/Ozon/Яндекс Маркетом.
+                Наш фокус — полный рабочий результат: принять фото и факты о товаре, собрать структуру карточки,
+                улучшить визуальную подачу, проверить спорные обещания и передать файлы для дальнейшей работы с WB/Ozon.
               </p>
             </CardContent>
           </Card>
         </motion.div>
 
         <div className="mb-16">
-          <h2 className="mb-12 text-center text-3xl font-bold">Принципы пилота</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold">Принципы продукта</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {values.map((item, index) => (
               <motion.div
@@ -113,8 +113,8 @@ export default function AboutPage() {
         >
           <h3 className="mb-3 text-xl font-semibold">Текущий статус</h3>
           <p className="text-muted-foreground">
-            Проект можно показывать как пилотную витрину и собирать первые целевые заявки. Массовые продажи,
-            личный кабинет и автоматическая выдача результата будут развиваться только после подтверждения повторных заказов.
+            Проект нужно развивать как управляемый сервис под ключ: сначала надежный прием фото, оплата, очередь,
+            ручная проверка и выдача файлов, затем автоматизация кабинета и API-интеграции маркетплейсов.
           </p>
         </motion.div>
       </main>

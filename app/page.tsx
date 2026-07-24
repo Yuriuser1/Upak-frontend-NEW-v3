@@ -43,42 +43,42 @@ const pilotTariffs = [
   },
   {
     name: 'Start',
-    price: '390 ₽',
+    price: '490-790 ₽',
     note: '1 SKU',
-    description: 'Одна структурированная карточка для проверки качества на реальном товаре.',
-    features: ['название', 'описание', 'преимущества', 'характеристики', 'ТЗ для визуала'],
+    description: 'AI-основа карточки: текст, структура и краткое ТЗ для визуала.',
+    features: ['название', 'описание', 'преимущества', 'характеристики', 'краткое ТЗ'],
     icon: Package,
   },
   {
-    name: 'Pilot 3',
-    price: '990 ₽',
-    note: '3 SKU',
-    description: 'Мини-пакет для менеджера или селлера, чтобы проверить повторяемость результата.',
-    features: ['3 товара', 'единая структура', 'сверка фактов', 'список рисковых формулировок'],
+    name: 'Под ключ Start',
+    price: '1 990-2 990 ₽',
+    note: '1 SKU',
+    description: 'Полный комплект карточки с фото-задачей, файлами и ручной проверкой.',
+    features: ['прием фото', 'AI-структура', 'фото-улучшение или ТЗ', 'PDF + ZIP + CSV', '1 цикл правок'],
     icon: BadgeCheck,
   },
   {
-    name: 'Pro 10',
-    price: '2 490-2 990 ₽',
+    name: 'Под ключ Pro 10',
+    price: '14 900-24 900 ₽',
     note: '10 SKU',
-    description: 'Пакетная подготовка карточек для линейки товаров.',
-    features: ['10 карточек', 'единый шаблон', 'экспорт в таблицу', 'ручной контроль качества'],
+    description: 'Пакетная подготовка карточек и визуальной логики для линейки товаров.',
+    features: ['10 карточек', 'единый стиль', 'экспорт XLSX/CSV', 'ручной контроль качества'],
     icon: FileSpreadsheet,
   },
   {
     name: 'Manager 30',
-    price: '6 990 ₽',
+    price: 'по расчету',
     note: '30 SKU',
     description: 'Пилот для менеджеров маркетплейсов, агентств и поставщиков с ассортиментом.',
-    features: ['30 SKU', 'правила бренда', 'пакетный бриф', 'CSV/XLSX по согласованному шаблону'],
+    features: ['30 SKU', 'правила бренда', 'пакетный бриф', 'SLA', 'таблица для массовой работы'],
     icon: Users,
   },
   {
-    name: 'Под ключ',
-    price: 'от 3 490 ₽',
-    note: 'ручная работа',
-    description: 'Для товаров, где нужен текст, визуальная логика, фото-задача и цикл правок.',
-    features: ['AI-структура', 'фото-задача', 'ТЗ инфографики', 'ручная проверка', '1 цикл правок'],
+    name: 'Фото + инфографика',
+    price: 'от 990 ₽',
+    note: 'доп. услуга',
+    description: 'Для товаров, где важны главный кадр, фон, слайды и визуальные преимущества.',
+    features: ['фон и кадр', 'визуальные акценты', 'слайды преимуществ', 'ручная проверка'],
     icon: Camera,
   },
 ];
@@ -95,15 +95,15 @@ const resultItems = [
   'структурированное описание без выдуманных свойств',
   'характеристики и обязательные поля из исходных данных',
   'преимущества и рисковые формулировки',
-  'сценарий 5-7 слайдов для инфографики',
-  'XLSX/CSV для работы и PDF/DOCX для согласования',
+  'обработка фото или ТЗ на визуал без искажения товара',
+  'PDF, ZIP с изображениями и XLSX/CSV для работы',
 ];
 
 const pilotMetrics = [
-  { value: '21 день', label: 'ручной коммерческий пилот' },
-  { value: '30 SKU', label: 'минимум реальных товаров' },
-  { value: '10 оплат', label: 'порог решения продолжать' },
-  { value: '3 повтора', label: 'проверка ценности продукта' },
+  { value: '1 SKU', label: 'быстрый тест качества' },
+  { value: '10 фото', label: 'можно передать на карточку' },
+  { value: 'PDF/ZIP', label: 'понятная выдача результата' },
+  { value: '1 правка', label: 'для формата под ключ' },
 ];
 
 function PreviewForm() {
@@ -255,7 +255,7 @@ export default function HomePage() {
             </span>
           </a>
           <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
-            <a href="#pilot" className="hover:text-blue-400">Пилот</a>
+            <Link href="/turnkey" className="hover:text-blue-400">Под ключ</Link>
             <a href="#result" className="hover:text-blue-400">Результат</a>
             <a href="#pricing" className="hover:text-blue-400">Тарифы</a>
             <a href="#risks" className="hover:text-blue-400">Честно</a>
@@ -275,13 +275,14 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="flex flex-col justify-center">
               <Badge className="mb-5 w-fit bg-blue-500/15 text-blue-200 hover:bg-blue-500/15">
-                21-дневный пилот для менеджеров маркетплейсов
+                Карточки под ключ для WB/Ozon
               </Badge>
               <h1 className="text-4xl font-bold leading-tight sm:text-6xl">
-                UPAK готовит не “AI-текст”, а комплект карточки для массовой работы с SKU
+                UPAK превращает фото и факты о товаре в готовый комплект карточки
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-300">
-                Пилотный сервис для менеджеров WB/Ozon: из исходных данных о товаре формируем проверенную структуру карточки, визуальное ТЗ и экспорт для дальнейшей работы.
+                Принимаем исходные фото, улучшаем визуальную подачу, генерируем продающее описание,
+                собираем структуру преимуществ и выдаем PDF, ZIP и таблицу для работы с маркетплейсом.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="#preview">
@@ -324,9 +325,10 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <Badge className="mb-4 bg-purple-500/15 text-purple-200 hover:bg-purple-500/15">Что получает клиент</Badge>
-              <h2 className="text-3xl font-bold sm:text-5xl">Структурированный комплект, а не обещание “продаж в топ”</h2>
+              <h2 className="text-3xl font-bold sm:text-5xl">Фото, текст, поля и файлы в одном результате</h2>
               <p className="mt-4 text-lg leading-8 text-gray-300">
-                UPAK не гарантирует рост продаж и позиции в поиске. Мы помогаем быстро подготовить контент, поля и визуальную логику, которые менеджер может проверить и использовать.
+                UPAK не гарантирует рост продаж и позиции в поиске. Мы помогаем быстро подготовить визуал,
+                контент, поля и экспорт, которые менеджер может проверить и использовать.
               </p>
             </div>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -362,9 +364,10 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <Badge className="mb-4 bg-blue-500/15 text-blue-200 hover:bg-blue-500/15">Тарифы пилота</Badge>
-              <h2 className="text-3xl font-bold sm:text-5xl">Цены для проверки спроса, а не массового SaaS</h2>
+              <h2 className="text-3xl font-bold sm:text-5xl">Тарифы под готовый комплект, а не только текст</h2>
               <p className="mt-4 text-lg text-gray-300">
-                Оплата платных пакетов только после согласования задачи и состава результата. “Под ключ” начинается от 3 490 ₽, потому что там есть ручная работа.
+                Оплата платных пакетов только после согласования задачи и состава результата. Дешевый Start
+                остается AI-основой, а настоящий формат под ключ включает фото, файлы и ручную проверку.
               </p>
             </div>
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -404,8 +407,8 @@ export default function HomePage() {
               <AlertTriangle className="mb-4 h-8 w-8 text-amber-300" />
               <h2 className="text-2xl font-bold">Честный статус проекта</h2>
               <div className="mt-4 grid gap-4 text-sm leading-6 text-amber-50 md:grid-cols-2">
-                <p>UPAK сейчас работает как ограниченный ручной пилот: preview, прием заявок, согласование результата и ручной контроль качества.</p>
-                <p>Личный кабинет, массовая автоматическая генерация, полноценная выдача результата и юридические документы должны быть завершены до масштабной рекламы.</p>
+                <p>UPAK сейчас должен развиваться как управляемый сервис под ключ: фото, бриф, оплата, очередь, AI-черновик, ручная проверка и выдача файлов.</p>
+                <p>Полностью автоматическая загрузка в кабинеты WB/Ozon возможна позже, после надежного хранения файлов, проверки шаблонов и безопасного подключения API.</p>
               </div>
             </div>
           </div>

@@ -24,14 +24,17 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center space-x-6 md:flex">
-          <Link href="/#pilot" className="text-sm font-medium transition-colors hover:text-blue-600">
-            Пилот
+          <Link href="/turnkey" className="text-sm font-medium transition-colors hover:text-blue-600">
+            Под ключ
           </Link>
           <Link href="/#result" className="text-sm font-medium transition-colors hover:text-blue-600">
             Результат
           </Link>
           <Link href="/pricing" className="text-sm font-medium transition-colors hover:text-blue-600">
             Тарифы
+          </Link>
+          <Link href="/dashboard" className="text-sm font-medium transition-colors hover:text-blue-600">
+            Кабинет
           </Link>
           <Link href="/brief" className="text-sm font-medium transition-colors hover:text-blue-600">
             Бриф
@@ -46,7 +49,7 @@ export function Header() {
 
         <Button asChild className="bg-blue-600 hover:bg-blue-500">
           <a href={TELEGRAM_URL} target="_blank" rel="noreferrer">
-            Обсудить пилот
+            Обсудить карточку
             <MessageCircle className="ml-2 h-4 w-4" />
           </a>
         </Button>

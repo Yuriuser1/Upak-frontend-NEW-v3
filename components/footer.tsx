@@ -36,6 +36,9 @@ export function Footer() {
               <Link href="/pricing" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
                 Тарифы
               </Link>
+              <Link href="/turnkey" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
+                Карточка под ключ
+              </Link>
               <Link href="/about" className="block text-slate-300 hover:text-blue-400 transition-colors text-sm">
                 О проекте
               </Link>

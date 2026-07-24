@@ -41,12 +41,6 @@ to = "/#pilot"
 status = 302
 force = true
 
-[[redirects]]
-from = "/dashboard/*"
-to = "/#pilot"
-status = 302
-force = true
-
 # Настройки для SSG
 [[headers]]
 for = "/*"
