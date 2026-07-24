@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Camera, CheckCircle, CreditCard, ImageUp, Package, Sparkles, Wand2 } from 'lucide-react';
 
+const TELEGRAM_URL = 'https://t.me/SellEasyBot';
+
 type Me = {
   email: string;
   subscription_type: 'free' | 'pro' | string | null;
@@ -55,6 +57,25 @@ export default function DashboardPage() {
   useEffect(() => { load(); }, []);
   const left = Math.max(0, (me?.cards_limit || 0) - (me?.cards_used || 0));
 
+  function openTelegramFallback(reason: string) {
+    const text = encodeURIComponent(
+      [
+        'Здравствуйте. Хочу оформить карточку UPAK под ключ.',
+        `Формат: ${formData.package}`,
+        `Маркетплейс: ${formData.marketplace}`,
+        `Товар: ${formData.product}`,
+        formData.photoTask ? `Задача по фото: ${formData.photoTask}` : '',
+        formData.telegram ? `Telegram: ${formData.telegram}` : '',
+        formData.email ? `Email: ${formData.email}` : '',
+        formData.imageFiles.length ? `Фото выбраны на сайте: ${formData.imageFiles.length} шт. Готов отправить здесь.` : '',
+        `Причина перехода в Telegram: ${reason}`,
+      ]
+        .filter(Boolean)
+        .join('\n')
+    );
+    window.open(`${TELEGRAM_URL}?text=${text}`, '_blank');
+  }
+
   async function buy(pkg: string) {
     setErr(null);
     if (!formData.email) {
@@ -74,6 +95,7 @@ export default function DashboardPage() {
       if (paymentUrl) window.location.href = paymentUrl;
     } catch (e: any) {
       setErr(e.message || 'Не удалось создать платеж');
+      openTelegramFallback('онлайн-оплата временно недоступна');
     }
   }
 
@@ -141,7 +163,8 @@ export default function DashboardPage() {
     } catch (e: any) {
       const message = e.message || 'Не удалось создать заказ';
       setErr(message);
-      toast.error('Не удалось открыть онлайн-оплату. Можно оформить заказ через Telegram.');
+      toast.error('Не удалось открыть онлайн-оформление. Открываем Telegram.');
+      openTelegramFallback('онлайн-оформление временно недоступно');
     } finally {
       setIsLoading(false);
     }
