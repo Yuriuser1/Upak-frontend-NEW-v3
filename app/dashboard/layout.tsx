@@ -6,7 +6,7 @@ import { checkAuth, logout } from '@/lib/auth';
 import { fetchAuthJSON } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CreditCard, Home, ImageUp, LayoutDashboard, LogOut, Settings, ShieldCheck } from 'lucide-react';
+import { ClipboardList, CreditCard, Home, ImageUp, LayoutDashboard, LogOut, Settings, ShieldCheck } from 'lucide-react';
 
 type MeData = {
   email: string;
@@ -15,6 +15,7 @@ type MeData = {
 
 const navItems = [
   { href: '/dashboard', label: 'Рабочий стол', icon: LayoutDashboard },
+  { href: '/dashboard/production', label: 'Производство', icon: ClipboardList },
   { href: '/dashboard/cards', label: 'Карточки и фото', icon: ImageUp },
   { href: '/dashboard/billing', label: 'Платежи', icon: CreditCard },
   { href: '/dashboard/settings', label: 'Настройки', icon: Settings },
